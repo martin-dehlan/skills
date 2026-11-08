@@ -8,6 +8,7 @@ This file lists only what is specific to <App>. **Where it differs from a skill,
 
 ## Deviations
 
+- **Repo:** <public / private>. Private → no OpenSSF badge or Scorecard (app-release skill).
 - **Source of truth:** <Drift for user data / Supabase for served content>. <Exceptions.>
 - **Auth:** <required / optional / guest mode>. <Router guard or none.>
 - **Navigation:** <shell, tabs, deep links, orientation>.

@@ -1,6 +1,6 @@
 ---
 name: app-release
-description: Shipping conventions for mobile apps - Conventional Commits, branches and PRs, versioning, changelog, pre-upload checks, App Store and Google Play review rules, the login release gate with Maestro device tests, store screenshots. Use when committing, opening a PR, bumping a version, testing login or auth flows on a device, preparing a store upload or making store images.
+description: Shipping conventions for mobile apps - Conventional Commits, branches and PRs, repo visibility (public vs private tooling), versioning, changelog, pre-upload checks, App Store and Google Play review rules, the login release gate with Maestro device tests, store screenshots. Use when committing, opening a PR, bumping a version, testing login or auth flows on a device, preparing a store upload or making store images.
 ---
 
 # Shipping an app
@@ -40,6 +40,24 @@ go together. Push after every commit. Never force-push `main`, never `--no-verif
 - Squash-merge. Before pushing: `dart format`, `flutter analyze`, `flutter test`,
   `build_runner` when annotations changed, UI check when UI changed, smoke test of the flow.
 - Before opening the PR, run the `pr-reviewer` agent on the branch.
+
+## Repo visibility
+
+The app's CLAUDE.md states whether the repo is **public** or **private**. Check it before
+adding or touching anything aimed at outside readers.
+
+| Tooling | Public | Private |
+|---|---|---|
+| gitleaks, OSV-Scanner, Dependabot, strict analyzer, branch protection | yes | yes |
+| OpenSSF Best Practices badge, Scorecard workflow + badge | yes | **no** |
+| README badges that need an outside viewer, public contributor process | yes | no |
+
+- OpenSSF Best Practices and Scorecard only work on public repos: Scorecard cannot read a
+  private repo with the default token, and the badge form links files nobody outside can open.
+  On a private repo, don't add them, and don't spend time keeping their answers up to date.
+- When a repo goes private, remove the badges and the Scorecard workflow in one PR, and
+  close the bestpractices.dev entry by hand.
+- When it goes public: scan the history with gitleaks first, then add them back.
 
 ## Versioning
 
