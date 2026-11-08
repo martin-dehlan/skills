@@ -56,5 +56,12 @@ Findings first, most severe first. Each finding:
 
 `[blocker|should|nit] path/to/file.dart:line: what is wrong → the concrete fix (rule or #issue)`
 
-Then one line per check you ran with its result. No praise, no summary of the diff. If there
-is nothing to report, say so in one line and list the checks.
+Then one line per check you ran with its result.
+
+Last, for a branch that fixes a bug: one line `Skill candidate:`. Either `none (one-off)`, or
+the bug class it belongs to, the generic rule that would have prevented it (no app names, no
+issue numbers) and the skill it belongs in. A class is a bug that already happened twice or
+would happen in the next app too.
+
+No praise, no summary of the diff. If there is nothing to report, say so in one line and list
+the checks.

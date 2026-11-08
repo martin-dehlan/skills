@@ -37,7 +37,7 @@ copy under another name, and both would load.
 | File | Purpose |
 |---|---|
 | `CLAUDE.md` | what the app is, its deviations (they win), **Helpers** (concrete classes for the skills' generic names), commands, docs. Start from [templates/CLAUDE.app.md](templates/CLAUDE.app.md) |
-| `scripts/check_ui_rules.sh`, `scripts/check_login_config.sh` | copies of the checks; CI runs them |
+| `scripts/check_ui_rules.sh`, `scripts/check_login_config.sh`, `scripts/check_claude_helpers.py` | copies of the checks; CI runs them |
 | `android/google-sha1.txt` | SHA-1 fingerprints registered in Google Cloud (debug, upload, Play App Signing) |
 | `e2e/` + `.env.e2e` (git-ignored) | Maestro auth flows and their test credentials |
 | `.ui-rules-ignore` | paths that legitimately use fixed pixels (share cards) |
@@ -46,7 +46,8 @@ copy under another name, and both would load.
 ## How this repo grows
 
 When a bug turns out to be a class rather than a one-off (it happened twice, or it would
-happen in the next app too), add one generic rule with a short reason to the matching skill,
+happen in the next app too), add one generic rule with a short reason to the matching skill.
+The `pr-reviewer` flags these as `Skill candidate:` on every fix branch. Add the rule
 in the same PR as the fix or right after it. App names, issue numbers and concrete class
 names stay out of the skills; they belong in the app's `CLAUDE.md`. Keep each `SKILL.md`
 short: details go to `references/`, which Claude reads only when the task needs them.

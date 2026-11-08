@@ -196,5 +196,10 @@ SDK only fails at build time. A dead package gets vendored under `packages/`.
 
 ```bash
 dart format . && flutter analyze && flutter test
-bash scripts/check_ui_rules.sh        # when UI files changed
+bash scripts/check_ui_rules.sh             # when UI files changed
+python3 scripts/check_claude_helpers.py    # when you renamed or moved a helper
 ```
+
+After renaming or moving a class listed under **Helpers** in CLAUDE.md, update the table in
+the same commit. [`scripts/check_claude_helpers.py`](scripts/check_claude_helpers.py) fails CI
+when a name there no longer exists in the code.
