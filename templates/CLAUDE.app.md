@@ -42,6 +42,8 @@ rows the app does not have.
 ## Commands
 
 ```bash
+bash scripts/install-git-hooks.sh          # once per clone: gitleaks pre-commit hook
+bash scripts/check_secrets.sh              # secret hygiene (hook, CI, .gitignore, history)
 dart run build_runner build
 dart format . && flutter analyze && flutter test
 bash scripts/check_ui_rules.sh

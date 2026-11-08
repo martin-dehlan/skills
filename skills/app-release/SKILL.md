@@ -1,6 +1,6 @@
 ---
 name: app-release
-description: Shipping conventions for mobile apps - Conventional Commits, branches and PRs, repo visibility (public vs private tooling), versioning, changelog, pre-upload checks, App Store and Google Play review rules, the login release gate with Maestro device tests, store screenshots. Use when committing, opening a PR, bumping a version, testing login or auth flows on a device, preparing a store upload or making store images.
+description: Shipping conventions for mobile apps - Conventional Commits, branches and PRs, keeping secrets out of git (gitleaks hook + CI, .gitignore, leak response), repo visibility (public vs private tooling), versioning, changelog, pre-upload checks, App Store and Google Play review rules, the login release gate with Maestro device tests, store screenshots. Use when committing, opening a PR, bumping a version, testing login or auth flows on a device, preparing a store upload or making store images.
 ---
 
 # Shipping an app
@@ -40,6 +40,30 @@ go together. Push after every commit. Never force-push `main`, never `--no-verif
 - Squash-merge. Before pushing: `dart format`, `flutter analyze`, `flutter test`,
   `build_runner` when annotations changed, UI check when UI changed, smoke test of the flow.
 - Before opening the PR, run the `pr-reviewer` agent on the branch.
+
+## Secrets never reach git
+
+Every app repo has three layers, public or private. **Read
+[references/secret-scanning.md](references/secret-scanning.md) when setting up a repo, when
+the hook blocks a commit, or when a secret was pushed.** Templates: `templates/secrets/` in
+the skills repo.
+
+1. `.gitignore` covers `.env*` (except `*.example`), keystores, `key.properties`, `.p8` /
+   `.p12` / `.pem` / `.key`, service-account JSON and Firebase client configs.
+2. gitleaks pre-commit hook (`scripts/install-git-hooks.sh` once per clone) with
+   `.gitleaks.toml`.
+3. gitleaks in CI on every PR and push to `main`.
+
+`bash scripts/check_secrets.sh` checks all three plus tracked files (gitleaks reads content,
+so a committed keystore or `.p8` is found only there). Run it when setting up a clone and
+before every store upload.
+
+- Before `git add`: never `git add -f` an ignored file; never `git add -A` with a new env or
+  key file lying around — check `git status` first.
+- A false positive gets a narrow allowlist entry in `.gitleaks.toml` with a reason, never
+  `--no-verify`.
+- A pushed secret is leaked, even on a private repo: **rotate it first**, then remove it.
+  History rewriting is cleanup, not the fix.
 
 ## Repo visibility
 
@@ -81,7 +105,8 @@ the issue or PR number.
 
 ## Before every store upload
 
-1. CI green on the release commit; version and changelog bumped in it.
+1. CI green on the release commit; version and changelog bumped in it;
+   `bash scripts/check_secrets.sh` passes.
 2. No destructive database change ships without its expand/contract plan and the
    minimum-version gate (see the supabase-app-backend skill).
 3. **Login release gate.** Widget tests do not count here: they fake the provider, and login

@@ -28,6 +28,9 @@ CLAUDE.md.
   `supabase secrets set`.
 - Each env file ships an `.example` with empty values. `Env.load()` throws if a tools key
   turns up in `.env`.
+- **Both files are git-ignored**, bundled or not; only the `.example` files are tracked.
+  gitleaks (hook + CI) and `scripts/check_secrets.sh` guard this: see the app-release skill,
+  *Secrets never reach git*. A leaked service role key bypasses all RLS: rotate it at once.
 
 ## Database changes
 

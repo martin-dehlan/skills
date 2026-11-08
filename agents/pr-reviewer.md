@@ -20,6 +20,8 @@ read it as a stranger would.
    the skills.
 2. Run the checks and keep their output:
    - `bash scripts/check_ui_rules.sh origin/main` (if the script exists)
+   - `bash scripts/check_secrets.sh origin/main` (if the script exists; otherwise run
+     `gitleaks git --redact --log-opts="origin/main..HEAD" .` and report the missing script)
    - `flutter analyze`
    - `flutter test` for the test folders that mirror the changed `lib/` folders
    - if the diff touches auth, the router, deep links or `ios/` / `android/` config:
@@ -29,6 +31,9 @@ read it as a stranger would.
 3. Read every changed file in full, plus the callers of anything whose signature changed.
 4. Check the diff against the skills, with extra attention on the bug classes that have hit
    these apps before:
+   - a secret in the diff: service role key, `sk_`/`sb_secret_` keys, passwords, a new env
+     or key file tracked, a `.gitignore` entry for secrets removed, an allowlist entry in
+     `.gitleaks.toml` that is broader than one path or value
    - a network call before the local write, or a network call without a timeout
    - outbox: parent/child order, permanent vs transient errors, a pull overwriting
      `isSynced = false`, local deletes that do not cascade

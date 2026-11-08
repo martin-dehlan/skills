@@ -12,7 +12,7 @@ app's `CLAUDE.md` maps them to its concrete classes and lists its deviations.
 | [flutter-feature-stack](skills/flutter-feature-stack/SKILL.md) | layers, folders, naming, Riverpod 3, Freezed, Drift, local-first sync ([offline-sync](skills/flutter-feature-stack/references/offline-sync.md)), navigation, deep links, errors, tests | working on Dart files in `lib/`, `test/`, `integration_test/` |
 | [lean-flutter-ui](skills/lean-flutter-ui/SKILL.md) | colors, spacing tokens, anti-AI-slop, motion values, loading and offline states, text and i18n, share cards, the [UI check](skills/lean-flutter-ui/scripts/check_ui_rules.sh) | working on presentation, widgets, theme, routes |
 | [supabase-app-backend](skills/supabase-app-backend/SKILL.md) | migrations ([deploys](skills/supabase-app-backend/references/migrations-and-deploys.md)), RLS, grants, storage, edge functions, native login, guest conversion, Resend, Namecheap, secrets | backend, auth, mail or DNS work |
-| [app-release](skills/app-release/SKILL.md) | commits, PRs, versioning, changelog, store review checklist, login release gate with [device testing](skills/app-release/references/device-testing.md) and the [login config check](skills/app-release/scripts/check_login_config.sh), [store screenshots](skills/app-release/references/store-screenshots.md) | committing, PRs, releases, device tests, store images |
+| [app-release](skills/app-release/SKILL.md) | commits, PRs, [secret scanning](skills/app-release/references/secret-scanning.md) with the [secret check](skills/app-release/scripts/check_secrets.sh), versioning, changelog, store review checklist, login release gate with [device testing](skills/app-release/references/device-testing.md) and the [login config check](skills/app-release/scripts/check_login_config.sh), [store screenshots](skills/app-release/references/store-screenshots.md) | committing, PRs, secrets, releases, device tests, store images |
 
 Plus one agent: [`pr-reviewer`](agents/pr-reviewer.md), a read-only review against all four
 skills before a PR.
@@ -37,7 +37,8 @@ copy under another name, and both would load.
 | File | Purpose |
 |---|---|
 | `CLAUDE.md` | what the app is, its deviations (they win), **Helpers** (concrete classes for the skills' generic names), commands, docs. Start from [templates/CLAUDE.app.md](templates/CLAUDE.app.md) |
-| `scripts/check_ui_rules.sh`, `scripts/check_login_config.sh`, `scripts/check_claude_helpers.py` | copies of the checks; CI runs them |
+| `scripts/check_ui_rules.sh`, `scripts/check_login_config.sh`, `scripts/check_claude_helpers.py`, `scripts/check_secrets.sh` | copies of the checks; CI runs them |
+| `.gitleaks.toml`, `scripts/git-hooks/pre-commit`, `scripts/install-git-hooks.sh`, `.github/workflows/secret-scan.yml`, secrets block in `.gitignore` | keep secrets out of git ([templates](templates/secrets/)) |
 | `android/google-sha1.txt` | SHA-1 fingerprints registered in Google Cloud (debug, upload, Play App Signing) |
 | `e2e/` + `.env.e2e` (git-ignored) | Maestro auth flows and their test credentials |
 | `.ui-rules-ignore` | paths that legitimately use fixed pixels (share cards) |
