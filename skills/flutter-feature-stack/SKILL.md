@@ -182,6 +182,9 @@ drift. Never edit `*.g.dart` or `*.freezed.dart`.
   tests: the whole app with network and platform fakes.
 - Always cover: loading ends, the network-error fallback, the error message shown, and
   offline write → reconnect → synced.
+- Auth and navigation flows also get a Maestro flow in `e2e/` (see the app-release skill,
+  device testing). Every control a flow taps carries `Semantics(identifier: '<area>.<name>')`;
+  flows never match localized text.
 
 ## Upgrades
 

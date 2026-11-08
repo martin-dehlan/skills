@@ -22,6 +22,10 @@ read it as a stranger would.
    - `bash scripts/check_ui_rules.sh origin/main` (if the script exists)
    - `flutter analyze`
    - `flutter test` for the test folders that mirror the changed `lib/` folders
+   - if the diff touches auth, the router, deep links or `ios/` / `android/` config:
+     `bash scripts/check_login_config.sh`, and the Maestro auth flows in `e2e/` when an
+     emulator or simulator is reachable (see the app-release skill, device testing). If
+     none is reachable, list the flows as "not run"; never report them as passed.
 3. Read every changed file in full, plus the callers of anything whose signature changed.
 4. Check the diff against the skills, with extra attention on the bug classes that have hit
    these apps before:

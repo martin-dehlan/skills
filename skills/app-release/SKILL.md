@@ -1,6 +1,6 @@
 ---
 name: app-release
-description: Shipping conventions for mobile apps - Conventional Commits, branches and PRs, versioning, changelog, pre-upload checks, App Store and Google Play review rules, the login release gate, store screenshots. Use when committing, opening a PR, bumping a version, preparing a store upload or making store images.
+description: Shipping conventions for mobile apps - Conventional Commits, branches and PRs, versioning, changelog, pre-upload checks, App Store and Google Play review rules, the login release gate with Maestro device tests, store screenshots. Use when committing, opening a PR, bumping a version, testing login or auth flows on a device, preparing a store upload or making store images.
 ---
 
 # Shipping an app
@@ -66,12 +66,17 @@ the issue or PR number.
 1. CI green on the release commit; version and changelog bumped in it.
 2. No destructive database change ships without its expand/contract plan and the
    minimum-version gate (see the supabase-app-backend skill).
-3. **Login release gate** in the **release build**, from a logged-out state. Widget tests do
-   not count here: they fake the provider, and login failures happen inside the native flows.
-   - Apple and Google sign-in on a real iPhone (newest iOS it runs), Google on a real Android.
-   - Guest → new account and guest → existing account, where the app has guests.
-   - Sign-out and account deletion land on the welcome screen.
-   - Record device, OS and result in the release PR. A failure blocks the upload.
+3. **Login release gate.** Widget tests do not count here: they fake the provider, and login
+   breaks inside native sheets and platform configuration. Follow
+   [references/device-testing.md](references/device-testing.md):
+   - `bash scripts/check_login_config.sh` passes (entitlements, URL schemes, deep-link flags,
+     SHA-1 fingerprints).
+   - The Maestro auth flows pass on the Android emulator (release APK) and the iOS simulator:
+     email, Google (Android), guest → new / existing account, sign-out and deletion landing.
+     Claude runs them when an emulator or simulator is reachable; otherwise it says so.
+   - Manual, release build on a real iPhone: Apple and Google sign-in.
+   - Record what ran, on which devices, with which result in the release PR. A failure blocks
+     the upload.
 4. Store review checklist below.
 5. Screenshots updated if the UI in them changed ([references/store-screenshots.md](references/store-screenshots.md)).
 

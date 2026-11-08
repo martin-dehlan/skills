@@ -36,6 +36,7 @@ rows the app does not have.
 | sync failure event | <analytics method> |
 | test helpers | `test/helpers/<files>` |
 | fixed-canvas renders (`.ui-rules-ignore`) | <paths> |
+| e2e | app id `<id>`, flows in `e2e/`, credentials in `.env.e2e`, Supabase test users |
 
 ## Commands
 
