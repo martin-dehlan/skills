@@ -116,6 +116,8 @@ the issue or PR number.
      SHA-1 fingerprints).
    - The Maestro auth flows pass on the Android emulator (release APK) and the iOS simulator:
      email, Google (Android), guest → new / existing account, sign-out and deletion landing.
+   - If the release touches the paywall, purchases or the entitlement webhook: the Test Store
+     purchase flow passes and the server rows follow (device testing, purchases).
      Claude runs them when an emulator or simulator is reachable; otherwise it says so.
    - Manual, release build on a real iPhone: Apple and Google sign-in.
    - Record what ran, on which devices, with which result in the release PR. A failure blocks

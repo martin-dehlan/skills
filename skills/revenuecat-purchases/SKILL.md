@@ -10,6 +10,8 @@ which. The repo's CLAUDE.md wins and names the concrete repository, entitlement 
 
 ## Keys
 
+- The secret key never goes in the bundled `.env`, not even "for now": the next build ships
+  it. It belongs in edge function secrets and, for local tools, the tools env file.
 - Only the public SDK keys ship: `REVENUECAT_APPLE_KEY` (`appl_…`) and
   `REVENUECAT_GOOGLE_KEY` (`goog_…`) in the bundled `.env`. The secret key (`sk_…`) lives in
   edge function secrets only. `Env` rejects `sk_` **by shape**, not only by name: a secret
@@ -100,6 +102,8 @@ rules: [references/server-entitlement.md](references/server-entitlement.md).
 
 ## Tests
 
+- End to end on a simulator with RevenueCat's Test Store: app-release, device testing,
+  purchases.
 - Pure functions for `statusFrom(CustomerInfo)`, plan period from product id, trial days,
   error-code mapping, telemetry properties.
 - The controller with a fake repository: purchase waits for identify; cancelled is not an

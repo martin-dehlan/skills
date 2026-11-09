@@ -31,17 +31,25 @@ a Supabase JWT).
 
 1. `POST` only. Compare the `Authorization` header with `REVENUECAT_WEBHOOK_AUTH` in
    constant time; `401` otherwise.
-2. Ignore `event.environment = 'SANDBOX'` in the production project (`200`), unless the
-   project is meant for testing.
+2. Sandbox: apply it while the app is in open testing or store review (testers and reviewers
+   buy in sandbox and need Pro). Ignore `event.environment = 'SANDBOX'` only once production
+   purchases are the only ones that should count. Store `is_sandbox` either way.
 3. Collect the affected app user ids: `event.app_user_id`, plus `transferred_from` and
    `transferred_to` for `TRANSFER`. Skip ids that are not UUIDs (RevenueCat anonymous
    `$RCAnonymousID:…`).
 4. **Do not derive the state from the event type.** Events can arrive late, twice or out of
    order, and a `RENEWAL` processed after an `EXPIRATION` would grant Pro forever. For each
-   id, read the truth: `GET https://api.revenuecat.com/v1/subscribers/{id}` with the secret
-   key (`REVENUECAT_SECRET_KEY`), take `subscriber.entitlements.pro.expires_date`
-   (`null` = lifetime), and write `is_pro = expires_date is null or expires_date > now()`
-   with `pro_expires_at`. The same call made twice gives the same row: idempotent.
+   id, read the truth with the v2 secret key (`REVENUECAT_SECRET_KEY`, read-only customer and
+   project configuration) and `REVENUECAT_PROJECT_ID`:
+   `GET /v2/projects/{project}/entitlements` once to resolve the internal id (`entl…`) of
+   lookup key `pro`, then `GET /v2/projects/{project}/customers/{id}/active_entitlements`.
+   `expires_at` is epoch ms (`null` = no end); a `404` customer has no Pro. New secret keys
+   are v2: the v1 `/subscribers` endpoint rejects them with code 7723. Write
+   `is_pro = expires_at is null or expires_at > now()` plus the end date. The same call made
+   twice gives the same row: idempotent.
+   If the read fails (missing secret, timeout, non-404 error), fall back to the event-type
+   mapping below instead of failing: a purchase must never stay ungranted because of the
+   lookup.
 5. `200` for everything handled or deliberately ignored; `500` only for a real failure, so
    RevenueCat retries. An id that matches no profile is a no-op, not an error.
 
