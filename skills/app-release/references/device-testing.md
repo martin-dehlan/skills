@@ -135,3 +135,34 @@ fresh emulators signing in from datacenter IPs trigger Google's verification pro
 - [ ] Sign in with Apple from a logged-out state
 - [ ] Sign in with Google from a logged-out state
 - [ ] Record device, iOS version and result in the release PR
+
+## 4. Purchases (RevenueCat Test Store)
+
+A purchase is tested end to end, app → RevenueCat → webhook → database, on a simulator or
+emulator without any store account. RevenueCat's **Test Store** (`test_…` SDK key) shows its
+own purchase sheet with "Test valid purchase" / "Test failed purchase", and it sends real
+webhooks (`environment: SANDBOX`). Run it whenever the paywall, the purchase code or the
+entitlement webhook changes, and before a release that touches any of them.
+
+1. **Prod backend.** The webhook only knows profiles in the project it writes to, so build
+   against the production Supabase. A dev build buys fine but the webhook finds no profile.
+2. **Test key, for the build only.** Back up the bundled `.env`, swap the platform's
+   RevenueCat key for the `test_` key, build (`flutter build ios --simulator --debug`),
+   restore `.env` and compare its checksum with the backup. A `test_` key that reaches a
+   release build disables the paywall. Use a `trap` so the restore runs even if the build
+   fails.
+3. **Test user in prod** (owner's consent once): created through the Auth admin API with
+   `email_confirm: true`, username and onboarding already set so the flow lands on the home
+   screen. Credentials in `.env.e2e`. Delete the user afterwards unless the app keeps it for
+   reruns; deleting the auth user cascades to its profile and entitlement rows.
+4. **Flow** `e2e/purchase_test_store.yaml`: sign in (conditional: iOS keeps the keychain
+   across `clearState`, so a session can survive), open the paywall the way users do, pick a
+   plan, tap "Test valid purchase", wait for the active state.
+5. **Check the server**, not only the screen: the entitlement column is true, the entitlement
+   table has an end date and `is_sandbox = true`, and the function logs show the webhook call
+   with 200 and no read-failure line. Test Store periods are accelerated (a month is ~5
+   minutes), so the next RENEWAL or EXPIRATION arrives within minutes: check it too.
+
+A store **sandbox** purchase (real App Store / Play sandbox account) still needs a device the
+owner has signed in; it belongs to the manual remainder before the first release with a
+paywall, not to every run.
