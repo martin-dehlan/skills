@@ -70,6 +70,11 @@ scrim (`cs.scrim` with opacity) over photos or video is fine; a gradient scrim i
   have an offline state.
 - Submit buttons show inline progress, are disabled while running, and the handler is
   single-flight so a double tap cannot create two rows.
+- **A spinner waits only for the answer that decides the next state.** Follow-up work after
+  that answer (token or device registration, uploads, sync, prefetch, analytics) runs in the
+  background and is never awaited by the UI. A retry or polling loop behind a button makes
+  every tap wait the loop's worst case. A permission sheet closes on the OS answer, not on
+  what the permission later unlocks.
 
 ## Text and languages
 

@@ -120,16 +120,22 @@ Rules for local-first writes. **Read [references/offline-sync.md](references/off
 before changing a repository, DAO, outbox, flusher or media upload.**
 1. Saving never waits on the network: write Drift, return, sync afterwards. Offline with an
    expired token, every Supabase call first waits in the auth refresh loop for seconds.
-2. Every network call has a timeout (the app's network-timeout helper). A hung call silently
-   blocks a single-flight queue for the rest of the session.
-3. Every user-written table has `isSynced` + `syncAttempts` and an outbox flusher; without
+2. Every network call has a timeout (the app's network-timeout helper), including SDK calls
+   that reach a server (push tokens, auth, payments). A hung call silently blocks a
+   single-flight queue for the rest of the session.
+3. Code that retries or polls is background work. Keep it out of the method a screen awaits:
+   split the decision (`requestPermission()`) from the follow-up (`registerToken()`), start
+   the follow-up unawaited, and make it single-flight so concurrent triggers (start-up, a
+   refresh callback, a button) share one run instead of stacking loops. A timeout bounds a
+   call; it does not make a UI await of it fast.
+4. Every user-written table has `isSynced` + `syncAttempts` and an outbox flusher; without
    them, one failed push strands the write on the device.
-4. A pull never overwrites a row with `isSynced = false`.
-5. Timestamps go to Supabase as UTC: `dt.toUtc().toIso8601String()`. An offset-less local
+5. A pull never overwrites a row with `isSynced = false`.
+6. Timestamps go to Supabase as UTC: `dt.toUtc().toIso8601String()`. An offset-less local
    time is stored shifted by the user's UTC offset, and the error grows on every re-save.
-6. Drift reads are scoped to the current user id; otherwise an account switch on the same
+7. Drift reads are scoped to the current user id; otherwise an account switch on the same
    device shows the previous user's rows.
-7. Schema change: bump `schemaVersion`, add the migration step **and** a migration test from
+8. Schema change: bump `schemaVersion`, add the migration step **and** a migration test from
    the previous version. A broken `onUpgrade` bricks every existing user at once. SQLite
    `ADD COLUMN` cannot take a non-constant default such as `currentDateAndTime`.
 
@@ -182,6 +188,10 @@ drift. Never edit `*.g.dart` or `*.freezed.dart`.
   tests: the whole app with network and platform fakes.
 - Always cover: loading ends, the network-error fallback, the error message shown, and
   offline write → reconnect → synced.
+- Never fake the seam where the latency lives. A widget test that replaces a whole service
+  cannot see that the service retries for seconds. Test the service with its SDK mocked: let
+  the slow call return a future that never completes and assert the UI-facing method still
+  returns within a short timeout.
 - Auth and navigation flows also get a Maestro flow in `e2e/` (see the app-release skill,
   device testing). Every control a flow taps carries `Semantics(identifier: '<area>.<name>')`;
   flows never match localized text.
