@@ -12,7 +12,7 @@ description: Backend conventions for mobile apps on Supabase - migrations, RLS, 
 | Push | Firebase Cloud Messaging (Firebase is used **only** for push) |
 | Mail | Resend, server-side only |
 | Domain + DNS | Namecheap |
-| Analytics / paywall | PostHog / RevenueCat |
+| Analytics / paywall | PostHog / RevenueCat (skills `posthog-analytics`, `revenuecat-purchases`) |
 
 Each app has its own repo (Flutter app + its Supabase project); newsletter and outreach code
 lives in a separate marketing repo. App-specific function and table names are in the repo's
@@ -70,7 +70,8 @@ writing a migration.** The short version:
 
 - One function per job in `supabase/functions/<name>/`; shared code in `_shared/`.
 - Verify the JWT unless it is a webhook. Webhooks (RevenueCat, Postgres triggers via
-  `pg_net`) check their shared secret first.
+  `pg_net`) check their shared secret first. The RevenueCat webhook and the `is_pro`
+  grant: revenuecat-purchases, server entitlement.
 - Service role only inside the function; re-check ownership in code.
 - JSON errors with a status code. Logs without personal data.
 - Never hardcode a project URL in SQL or code that runs in several environments.
