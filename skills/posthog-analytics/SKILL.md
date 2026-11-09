@@ -92,7 +92,7 @@ provided through Riverpod and overridden in `main()` with the initialised instan
 
 - Use PostHog error tracking (`config.errorTrackingConfig`): `captureFlutterErrors`,
   `capturePlatformDispatcherErrors`, `captureNativeExceptions`, and
-  `inAppIncludes.add('package:<app>')`. A hand-rolled `app_error` event sees Dart errors
+  `inAppIncludes.add('<app>')` (the bare package name; a `package:` prefix matches no frames). A hand-rolled `app_error` event sees Dart errors
   only: native crashes, ANRs and hangs stay invisible. If users report crashes and the
   tiles are quiet, believe the users.
 - Caught errors that should not happen go through `analytics.error(e, where: ...)` →
