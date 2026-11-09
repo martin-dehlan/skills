@@ -35,6 +35,8 @@ rows the app does not have.
 | signed-URL image widget | <name> |
 | outbox flushers | <path> |
 | sync failure event | <analytics method> |
+| analytics service / event names | <service + path>, <events constants class> |
+| Pro repository / entitlement | <repository + path>, entitlement `<id>`, webhook `<function>` |
 | test helpers | `test/helpers/<files>` |
 | fixed-canvas renders (`.ui-rules-ignore`) | <paths> |
 | e2e | app id `<id>`, flows in `e2e/`, credentials in `.env.e2e`, Supabase test users |

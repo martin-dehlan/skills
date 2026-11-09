@@ -13,8 +13,10 @@ app's `CLAUDE.md` maps them to its concrete classes and lists its deviations.
 | [lean-flutter-ui](skills/lean-flutter-ui/SKILL.md) | colors, spacing tokens, anti-AI-slop, motion values, loading and offline states, text and i18n, share cards, the [UI check](skills/lean-flutter-ui/scripts/check_ui_rules.sh) | working on presentation, widgets, theme, routes |
 | [supabase-app-backend](skills/supabase-app-backend/SKILL.md) | migrations ([deploys](skills/supabase-app-backend/references/migrations-and-deploys.md)), RLS, grants, storage, edge functions, native login, guest conversion, Resend, Namecheap, secrets | backend, auth, mail or DNS work |
 | [app-release](skills/app-release/SKILL.md) | commits, PRs, [secret scanning](skills/app-release/references/secret-scanning.md) with the [secret check](skills/app-release/scripts/check_secrets.sh), versioning, changelog, store review checklist, login release gate with [device testing](skills/app-release/references/device-testing.md) and the [login config check](skills/app-release/scripts/check_login_config.sh), [store screenshots](skills/app-release/references/store-screenshots.md) | committing, PRs, secrets, releases, device tests, store images |
+| [posthog-analytics](skills/posthog-analytics/SKILL.md) | analytics service, identify/reset, event naming, privacy (ids only, scrubber, opt-out, replay masking), error tracking, internal and store-test traffic, [funnels and HogQL](skills/posthog-analytics/references/funnels-and-queries.md) | events, consent, auth identity, reading the numbers |
+| [revenuecat-purchases](skills/revenuecat-purchases/SKILL.md) | keys, entitlements and offerings, logIn/logOut, purchase flow and error mapping, trials, purchase telemetry, [server-verified Pro](skills/revenuecat-purchases/references/server-entitlement.md) via webhook | paywall, Pro gating, subscriptions, the webhook |
 
-Plus one agent: [`pr-reviewer`](agents/pr-reviewer.md), a read-only review against all four
+Plus one agent: [`pr-reviewer`](agents/pr-reviewer.md), a read-only review against all six
 skills before a PR.
 
 ## Install (once per machine)
