@@ -35,6 +35,8 @@ read it as a stranger would.
      or key file tracked, a `.gitignore` entry for secrets removed, an allowlist entry in
      `.gitleaks.toml` that is broader than one path or value
    - a network call before the local write, or a network call without a timeout
+   - a button, sheet or screen that awaits follow-up work (retry or polling loops, token
+     registration, uploads, sync) instead of only the answer it decides on
    - outbox: parent/child order, permanent vs transient errors, a pull overwriting
      `isSynced = false`, local deletes that do not cascade
    - timestamps sent without `toUtc()`
