@@ -162,6 +162,16 @@ fixing one path, grep all entry points: a fix applied to one path ships the bug 
   AndroidManifest), or it races app_links into a 404 on cold start. On cold start, hold the
   splash until the profile is ready, then `go` (not `push`) to the target so nothing flashes
   underneath.
+- **The launch link goes to the first listener only.** `AppLinks()` is a singleton with one
+  broadcast stream, and the platform sends the cold-start link once, on the first `onListen`.
+  `supabase_flutter` subscribes inside `Supabase.initialize`, long before the router does, so
+  a router that only listens to `uriLinkStream` never sees it: warm links work, cold-start
+  links open the home screen. Read `getInitialLink()` first (the platform keeps it), then
+  the stream, and drop the first stream event if it equals the initial link. Test it with a
+  link that arrives before the router subscribes.
+- Opening the same link twice: `go` to the current location is a no-op, so a one-shot effect
+  of the page (a modal, a scroll) does not run again. Pass a fresh `extra` per link and key
+  the page widget by it.
 - `context.go` for top level and tabs, `context.push` for drill-down.
 
 ## Code-gen
