@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: shellcheck
+        run: |
+          sudo apt-get install -y shellcheck >/dev/null
+          shellcheck -S warning $(git ls-files '*.sh') templates/secrets/pre-commit
+      - name: lint skills, agents and links
+        run: python3 tests/lint_skills.py
+      - name: fixture tests
+        run: |
+          git config --global user.email ci@example.com
+          git config --global user.name ci
+          for t in tests/*_test.sh; do echo "== $t"; bash "$t"; done
