@@ -64,6 +64,7 @@ copy under another name, and both would load.
 | `android/google-sha1.txt` | SHA-1 fingerprints registered in Google Cloud (debug, upload, Play App Signing) |
 | `e2e/` + `.env.e2e` (git-ignored) | Maestro auth flows and their test credentials |
 | `.ui-rules-ignore` | paths that legitimately use fixed pixels (share cards) |
+| `.claude/settings.json` + `.claude/hooks/*.sh` | enforce at write time ([templates](templates/claude/)): `guard-files.sh` refuses edits to generated files and real `.env*`; `format-dart.sh` formats; `check-edited-dart.sh` runs the UI, layer and size checks on the edited file and returns violations in the same turn; `gate-pr-create.sh` blocks `gh pr create` until `pr-reviewer` recorded a review of this HEAD (override for one call: prefix `SKIP_PR_REVIEW=1`) |
 
 ### Path-scoped rules
 
