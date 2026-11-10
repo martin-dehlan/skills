@@ -27,6 +27,9 @@ go together. Push after every commit. Never force-push `main`, never `--no-verif
 
 ## Branches and PRs
 
+Commit and PR rules also stand as short invariants in the app's CLAUDE.md template, so they
+hold when this skill is not loaded.
+
 | Change | Where |
 |---|---|
 | Feature | `feat/<name>` → PR |
@@ -39,7 +42,13 @@ go together. Push after every commit. Never force-push `main`, never `--no-verif
   itself), test plan with what ran and what was checked on a device.
 - Squash-merge. Before pushing: `dart format`, `flutter analyze`, `flutter test`,
   `build_runner` when annotations changed, UI check when UI changed, smoke test of the flow.
-- Before opening the PR, run the `pr-reviewer` agent on the branch.
+- Before opening the PR, run the `pr-reviewer` agent on the branch (`/ship` does this).
+
+**Worktrees and branches:** one branch per concept, one worktree per branch you work on in
+parallel (`git worktree add ../<repo>-<n> -b <branch> origin/main`). After the PR is merged:
+`git worktree remove ../<repo>-<n>`, `git branch -d <branch>`, `git fetch --prune`. Do not
+leave worktrees behind: each holds a full checkout and its build artifacts. Never
+`--delete-branch` on a PR that is the base of another open PR; GitHub closes the dependent.
 
 ## Secrets never reach git
 
@@ -123,7 +132,9 @@ the issue or PR number.
    - Manual, release build on a real iPhone: Apple and Google sign-in.
    - Record what ran, on which devices, with which result in the release PR. A failure blocks
      the upload.
-4. Store review checklist below.
+4. Store review checklist below. Dated requirements (target API, toolchain, deadlines) are in
+   [references/platform-facts.md](references/platform-facts.md); re-check it when its date is
+   older than 90 days.
 5. Screenshots updated if the UI in them changed ([references/store-screenshots.md](references/store-screenshots.md)).
 
 ## App Store review: rejections that already happened
@@ -140,11 +151,15 @@ Each row below was a real rejection. Check all of them before every submission:
 | 5.1.1(v) | Account deletion is reachable inside the app |
 | 3.1.2 Subscriptions | Paywall shows price per period, trial terms, restore purchases, Terms of Use and Privacy Policy links |
 | 5.1.1 Permissions | Every permission string says why (camera: "to scan a label") |
+| Toolchain | Built with the Xcode SDK Apple currently requires (platform-facts), not an older cached toolchain |
+| Age rating | The questionnaire answers match the app: user-generated content, web access, purchases, in-app chat. Update it when a feature changes |
+| Token revocation | Account deletion revokes the Sign in with Apple token (platform-facts; backend skill, account lifecycle) |
 
 ## Google Play
 
-- Target the API level Play currently requires (watch the Play Console warnings).
-- Update the Data safety form when collected data changes.
+- Target the API level Play currently requires (platform-facts; watch the Play Console warnings).
+- Update the Data safety form when collected data changes. Keep the answers for every store questionnaire (Data safety, privacy nutrition labels, age rating, content rights) in `store/forms.md` in the app repo, from [templates/store/forms.md](../../templates/store/forms.md), so the next release copies them instead of re-deriving them.
+- Rollback and hotfix path: the `release` skill, step 7.
 - Account deletion: in the app **and** a web page to request it.
 - Play screenshots are a separate 9:16 export (see the screenshots reference).
 

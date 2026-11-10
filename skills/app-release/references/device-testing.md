@@ -39,6 +39,7 @@ brew install openjdk@17
 curl -Ls "https://get.maestro.mobile.dev" | bash
 
 # Android emulator WITH Play Store: Google sign-in needs Google Play services
+# image id and its date: references/platform-facts.md
 sdkmanager "system-images;android-35;google_apis_playstore;arm64-v8a"
 avdmanager create avd -n e2e -d pixel_8 -k "system-images;android-35;google_apis_playstore;arm64-v8a"
 emulator -avd e2e &
