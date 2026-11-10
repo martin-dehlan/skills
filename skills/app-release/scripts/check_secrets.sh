@@ -11,7 +11,7 @@ set -uo pipefail
 
 base="${1:-}"
 root="$(git rev-parse --show-toplevel)" || exit 1
-cd "$root"
+cd "$root" || exit 2
 
 fails=0
 warns=0
@@ -77,6 +77,7 @@ else
   warn "Firebase configs not ignored:$fb_missing (fine only if their API keys are restricted)"
 fi
 
+# shellcheck disable=SC2043
 for p in .env.example; do
   if git check-ignore -q --no-index "$p"; then
     warn "$p is ignored: add '!.env.example' so the template stays in git"
