@@ -147,7 +147,7 @@ own purchase sheet with "Test valid purchase" / "Test failed purchase", and it s
 webhooks (`environment: SANDBOX`). Run it whenever the paywall, the purchase code or the
 entitlement webhook changes, and before a release that touches any of them.
 
-1. **Prod backend.** The webhook only knows profiles in the project it writes to, so build
+1. **Prod backend.** The webhook only knows users in the project it writes to, so build
    against the production Supabase. A dev build buys fine but the webhook finds no profile.
 2. **Test key, for the build only.** Back up the bundled `.env`, swap the platform's
    RevenueCat key for the `test_` key, build (`flutter build ios --simulator --debug`),

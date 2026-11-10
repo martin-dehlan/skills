@@ -82,7 +82,7 @@ writing a migration.** The short version:
   wrap handlers with `withSupabase` and read keys from `SUPABASE_SECRET_KEYS`; if the project
   already uses that wrapper, follow it, otherwise keep the plain `Deno.serve` handler and read
   the secret key from the function's env. Webhooks (RevenueCat, Postgres triggers via
-  `pg_net`) check their shared secret first. The RevenueCat webhook and the `is_pro`
+  `pg_net`) check their shared secret first. The RevenueCat webhook and the `user_entitlements`
   grant: revenuecat-purchases, server entitlement.
 - Service role only inside the function; re-check ownership in code.
 - JSON errors with a status code. Logs without personal data.

@@ -16,11 +16,20 @@ which. The repo's CLAUDE.md wins and names the concrete repository, entitlement 
   `REVENUECAT_GOOGLE_KEY` (`goog_…`) in the bundled `.env`. The secret key (`sk_…`) lives in
   edge function secrets only. `Env` rejects `sk_` **by shape**, not only by name: a secret
   pasted under a public name ships just the same.
-- A `test_` key in a release build: skip `configure`. RevenueCat shows a native warning
-  dialog to every user otherwise.
+- A `test_` key in a **release** build is a fatal error in the SDK (it does not just show a
+  warning dialog): never ship it. Guard twice: skip `configure` when the key starts with
+  `test_` and the build is release, and fail the release script when `.env` contains
+  `test_` (the app-release device-testing steps restore `.env` and compare its checksum).
 - No key for this platform → Pro is **unavailable**: nothing is locked, no paywall is shown.
   A paywall nobody can pay at is worse than a free feature. Implement it as a second
   repository (`UnavailableProRepository`), not as `if`s in the UI.
+
+## SDK versions
+
+Read from the apps' `pubspec.lock` on 2026-11-10: `purchases_flutter` 9.16 (sippd) and 11.0
+(purelofi), two majors apart. The rules here hold for both; where the API differs, the app's
+CLAUDE.md names which major it is on. Upgrade one major at a time and re-run the Test Store
+flow.
 
 ## Shape
 
@@ -108,3 +117,21 @@ rules: [references/server-entitlement.md](references/server-entitlement.md).
   error-code mapping, telemetry properties.
 - The controller with a fake repository: purchase waits for identify; cancelled is not an
   error; unavailable Pro locks nothing.
+
+## Troubleshooting: the paywall is empty or prices do not load
+
+Work down the list; the first failing item is the cause.
+
+1. **Offerings:** RevenueCat dashboard → Offerings has a *current* offering with packages
+   attached to products; the app calls `getOfferings()` and logs `current == null`.
+2. **Products:** each product exists in the store, has the *same id* in RevenueCat, and its
+   state is ready (App Store Connect: "Ready to Submit" or later, with price and
+   localization; Play Console: active base plan).
+3. **Agreements:** Paid Apps Agreement accepted, tax and banking complete (App Store Connect);
+   merchant account set up (Play).
+4. **Bundle id / package name** in RevenueCat equals the app's, and the right platform key
+   (`appl_` / `goog_`) is configured.
+5. **Build:** an App Store build needs a sandbox Apple account on the device; Android needs a
+   Play-installed build (internal testing track) with a licence-tester account; a simulator
+   with the Test Store (`test_` key) needs no store account.
+6. **Cache:** products can take hours after creation; try another device before changing code.
