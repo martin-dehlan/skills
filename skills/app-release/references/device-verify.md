@@ -118,6 +118,10 @@ both platforms; everything else on one is enough for a feature branch.
   separately.
 - **No coordinate taps** (`point: "85%,91%"`): they hit something else on another screen
   size or with a banner. An icon-only tab gets an id instead.
+- **Rows below the fold need a scroll.** `extendedWaitUntil` does not scroll; a menu row that
+  fits on a tall simulator is off-screen on a shorter phone. Use
+  `scrollUntilVisible: {element: {id: "profile.subscription"}, direction: DOWN}` before
+  tapping anything in a long list.
 - **Text selectors only for native views** (account picker, system dialogs, store sheets).
   Everything Flutter renders is matched by id.
 - **A fresh install proves less.** On a new simulator the app starts signed out, so a smoke
