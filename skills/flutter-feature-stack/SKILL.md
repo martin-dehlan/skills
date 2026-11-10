@@ -194,6 +194,10 @@ SDK only fails at build time. A dead package gets vendored under `packages/`.
 
 ## Before you say done
 
+Verify a visible change at the cheapest tier that can show the failure (golden shot, running
+app with hot reload and screenshot, Maestro on a fresh build):
+[references/verify-changes.md](references/verify-changes.md). Look at the image.
+
 ```bash
 dart format . && flutter analyze && flutter test
 bash scripts/check_ui_rules.sh             # when UI files changed
