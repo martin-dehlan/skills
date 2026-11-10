@@ -7,7 +7,8 @@
 #                                                 # SHA-1 list is a failure
 #
 # Checks only what the app uses (read from pubspec.yaml):
-#   app_links          → engine deep linking switched off on iOS and Android
+#   app_links or       → engine deep linking switched off on iOS and Android
+#   supabase_flutter     (which pulls in app_links for the auth callback)
 #   sign_in_with_apple → every iOS entitlements file has the Apple sign-in capability
 #   google_sign_in     → the reversed iOS client ID registered as URL scheme
 #   android signing    → debug + upload key SHA-1 listed in android/google-sha1.txt
@@ -30,7 +31,7 @@ manifest=android/app/src/main/AndroidManifest.xml
 
 echo "Login configuration"
 
-if uses app_links; then
+if uses app_links || uses supabase_flutter; then
   if grep -A1 '<key>FlutterDeepLinkingEnabled</key>' "$plist" 2>/dev/null | grep -q '<false/>'; then
     ok "iOS: FlutterDeepLinkingEnabled = false"
   else

@@ -22,7 +22,8 @@ bash scripts/check_login_config.sh --strict   # CI and release; without --strict
 ```
 
 [`../scripts/check_login_config.sh`](../scripts/check_login_config.sh) checks only what the
-app uses: engine deep linking off (with `app_links`), the Apple sign-in capability in every
+app uses: engine deep linking off (with `app_links`, also when only
+`supabase_flutter` brings it in), the Apple sign-in capability in every
 entitlements file, the reversed Google client ID as URL scheme, and the debug and upload key
 SHA-1 against `android/google-sha1.txt`. That file lists the fingerprints registered in Google
 Cloud (debug, upload, Play App Signing), one per line; keep it in sync with the console. A
