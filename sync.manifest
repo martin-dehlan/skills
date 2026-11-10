@@ -12,3 +12,13 @@ managed	templates/claude/hooks/format-dart.sh	.claude/hooks/format-dart.sh
 seed	templates/secrets/gitleaks.toml	.gitleaks.toml
 seed	templates/claude/settings.json	.claude/settings.json
 seed	templates/CLAUDE.app.md	CLAUDE.md
+managed	skills/flutter-feature-stack/scripts/check_layers.sh	scripts/check_layers.sh
+managed	skills/flutter-feature-stack/scripts/check_file_sizes.sh	scripts/check_file_sizes.sh
+managed	templates/claude/hooks/guard-files.sh	.claude/hooks/guard-files.sh
+managed	templates/claude/hooks/check-edited-dart.sh	.claude/hooks/check-edited-dart.sh
+managed	templates/claude/hooks/gate-pr-create.sh	.claude/hooks/gate-pr-create.sh
+seed	templates/claude/rules/dart-ui.md	.claude/rules/dart-ui.md
+seed	templates/claude/rules/migrations.md	.claude/rules/migrations.md
+seed	templates/claude/rules/generated.md	.claude/rules/generated.md
+seed	templates/ci/dependabot.yml	.github/dependabot.yml
+seed	templates/ci/osv-scanner.yml	.github/workflows/osv-scanner.yml
