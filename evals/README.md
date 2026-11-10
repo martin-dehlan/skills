@@ -17,12 +17,12 @@ copy the two totals into the table below with the date.
 
 | Skill | On | Off | Date |
 |---|---|---|---|
-| flutter-feature-stack | not run | not run | |
-| lean-flutter-ui | not run | not run | |
-| supabase-app-backend | not run | not run | |
-| app-release | not run | not run | |
-| posthog-analytics | not run | not run | |
-| revenuecat-purchases | not run | not run | |
+| flutter-feature-stack | 2/5 | not run | 2026-11-10 |
+| lean-flutter-ui | 4/5 | not run | 2026-11-10 |
+| supabase-app-backend | 5/5 | not run | 2026-11-10 |
+| app-release | 5/5 | not run | 2026-11-10 |
+| posthog-analytics | 5/5 | not run | 2026-11-10 |
+| revenuecat-purchases | 3/5 | not run | 2026-11-10 |
 
 ## Monthly check (first Monday)
 
