@@ -16,6 +16,11 @@ app's `CLAUDE.md` maps them to its concrete classes and lists its deviations.
 | [posthog-analytics](skills/posthog-analytics/SKILL.md) | analytics service, identify/reset, event naming, privacy (ids only, scrubber, opt-out, replay masking), error tracking, internal and store-test traffic, [funnels and HogQL](skills/posthog-analytics/references/funnels-and-queries.md) | events, consent, auth identity, reading the numbers |
 | [revenuecat-purchases](skills/revenuecat-purchases/SKILL.md) | keys, entitlements and offerings, logIn/logOut, purchase flow and error mapping, trials, purchase telemetry, [server-verified Pro](skills/revenuecat-purchases/references/server-entitlement.md) via webhook | paywall, Pro gating, subscriptions, the webhook |
 
+Three manual workflow skills (`disable-model-invocation`, run them as slash commands):
+[`/ship`](skills/ship/SKILL.md) takes a finished change to an open PR with checks, reviewer and
+CI watch; [`/release`](skills/release/SKILL.md) gate, version, build, upload, record, rollback;
+[`/app-setup`](skills/app-setup/SKILL.md) scaffolds a new app and rolls in the shared files.
+
 Plus one agent: [`pr-reviewer`](agents/pr-reviewer.md), a read-only review against all six
 skills before a PR.
 
