@@ -16,7 +16,7 @@ pass=0; total=0
 while IFS=$'\t' read -r skill prompt expect forbid; do
   case "$skill" in ''|\#*) continue ;; esac
   [ -n "$only" ] && [ "$skill" != "$only" ] && continue
-  answer=$(cd "$(mktemp -d)" && claude -p "$prompt" "${model[@]}" 2>/dev/null) || answer=""
+  answer=$(cd "$(mktemp -d)" && claude -p "$prompt" ${model[@]+"${model[@]}"} 2>/dev/null) || answer=""
   ok=1
   printf '%s' "$answer" | grep -Eiq "$expect" || ok=0
   if [ -n "$forbid" ] && printf '%s' "$answer" | grep -Eiq "$forbid"; then ok=0; fi
