@@ -90,7 +90,7 @@ writing a migration.** The short version:
 - Fall back from the native flow to web OAuth only when native is unavailable, never on a
   real error: the fallback turns an error such as an identity collision into a silent
   "still not signed in".
-- Track `auth_login_attempt`, `auth_login`, `auth_login_failed` with method and error code.
+- Track `login_started`, `login_completed`, `login_failed` (event names: posthog-analytics) with method and error code.
 
 ## Guest → account conversion
 

@@ -79,5 +79,5 @@ PostHog and Supabase should agree. When they do not, find out which is wrong:
 ## Alerts
 
 One alert per thing that would otherwise reach you through a review: login failures
-(`sign_in_failed` by more than 2 people a day), terminal sync failures, purchase failures by
+(`login_failed` by more than 2 people a day), terminal sync failures, purchase failures by
 `reason`. Name the alert after the symptom, list it in the app's CLAUDE.md.

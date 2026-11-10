@@ -149,6 +149,6 @@ Each row below was a real rejection. Check all of them before every submission:
 
 ## After release
 
-Watch for 48 hours: `auth_login_failed` (keep an analytics alert on it, e.g. more than two
-people a day), `sync_failed`, `app_error`, crash-free sessions. Read who is affected before
+Watch for 48 hours: `login_failed` (keep an analytics alert on it, e.g. more than two
+people a day), `sync_failed`, `$exception` (error tracking), crash-free sessions. Read who is affected before
 acting: the store test devices are listed in the app's analytics doc.
