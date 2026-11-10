@@ -1,7 +1,6 @@
 ---
 name: flutter-feature-stack
-description: Flutter app architecture conventions - layers, folders, naming, Riverpod 3, Freezed, Drift local-first sync, go_router, deep links, errors, tests. Use for any Dart code in lib/, test/ or integration_test/ of a Flutter app on the Riverpod + Freezed + Drift + Supabase stack.
-paths: "lib/**/*.dart, test/**/*.dart, integration_test/**/*.dart, pubspec.yaml"
+description: Use before writing or changing any Dart code in a Flutter app on the Riverpod + Freezed + Drift + Supabase stack (lib/, test/, integration_test/), including planning a feature or a fix. Architecture conventions - layers, folders, naming, Riverpod 3, Freezed, Drift local-first sync, go_router, deep links, errors, tests.
 ---
 
 # Flutter feature stack

@@ -1,7 +1,6 @@
 ---
 name: lean-flutter-ui
-description: Lean Flutter UI conventions - theme colors, responsive spacing tokens, anti-AI-slop, motion values, skeleton loading, offline states, text and i18n layout, off-screen renders. Use when building or changing any screen, widget, animation, loading state or share card in a Flutter app.
-paths: "lib/**/presentation/**, lib/common/widgets/**, lib/common/theme/**, lib/common/utils/responsive.dart, lib/core/routes/**"
+description: Use before building or changing any screen, widget, animation, loading state, theme or share card in a Flutter app, including planning the UI. Lean Flutter UI conventions - theme colors, responsive spacing tokens, anti-AI-slop, motion values, skeleton loading, offline states, text and i18n layout, off-screen renders.
 ---
 
 # Lean Flutter UI

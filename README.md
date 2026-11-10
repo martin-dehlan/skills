@@ -7,10 +7,10 @@ contributor docs: an app's README and CONTRIBUTING link here instead of keeping 
 Every rule comes from code that shipped or from a production bug. Skills stay generic; each
 app's `CLAUDE.md` maps them to its concrete classes and lists its deviations.
 
-| Skill | Covers | Loads when |
+| Skill | Covers | Load |
 |---|---|---|
-| [flutter-feature-stack](skills/flutter-feature-stack/SKILL.md) | layers, folders, naming, Riverpod 3, Freezed, Drift, local-first sync ([offline-sync](skills/flutter-feature-stack/references/offline-sync.md)), navigation, deep links, errors, tests | working on Dart files in `lib/`, `test/`, `integration_test/` |
-| [lean-flutter-ui](skills/lean-flutter-ui/SKILL.md) | colors, spacing tokens, anti-AI-slop, motion values, loading and offline states, text and i18n, share cards, the [UI check](skills/lean-flutter-ui/scripts/check_ui_rules.sh) | working on presentation, widgets, theme, routes |
+| [flutter-feature-stack](skills/flutter-feature-stack/SKILL.md) | layers, folders, naming, Riverpod 3, Freezed, Drift, local-first sync ([offline-sync](skills/flutter-feature-stack/references/offline-sync.md)), navigation, deep links, errors, tests | before any Dart change, planning included |
+| [lean-flutter-ui](skills/lean-flutter-ui/SKILL.md) | colors, spacing tokens, anti-AI-slop, motion values, loading and offline states, text and i18n, share cards, the [UI check](skills/lean-flutter-ui/scripts/check_ui_rules.sh) | before any screen, widget, theme or animation change |
 | [supabase-app-backend](skills/supabase-app-backend/SKILL.md) | migrations ([deploys](skills/supabase-app-backend/references/migrations-and-deploys.md)), RLS, grants, storage, edge functions, native login, guest conversion, Resend, Namecheap, secrets | backend, auth, mail or DNS work |
 | [app-release](skills/app-release/SKILL.md) | commits, PRs, [secret scanning](skills/app-release/references/secret-scanning.md) with the [secret check](skills/app-release/scripts/check_secrets.sh), versioning, changelog, store review checklist, login release gate with [device testing](skills/app-release/references/device-testing.md) and the [login config check](skills/app-release/scripts/check_login_config.sh), [store screenshots](skills/app-release/references/store-screenshots.md) | committing, PRs, secrets, releases, device tests, store images |
 | [posthog-analytics](skills/posthog-analytics/SKILL.md) | analytics service, identify/reset, event naming, privacy (ids only, scrubber, opt-out, replay masking), error tracking, internal and store-test traffic, [funnels and HogQL](skills/posthog-analytics/references/funnels-and-queries.md) | events, consent, auth identity, reading the numbers |
@@ -28,7 +28,9 @@ git clone https://github.com/martin-dehlan/skills ~/code/skills
 
 Skills are symlinked one by one into `~/.claude/skills/`, so `git pull` updates them in place.
 The agent is copied into `~/.claude/agents/`; re-run `install.sh` after pulling agent changes.
-Restart Claude Code, then `/skills` and `/agents` list them. `/skill-doctor` shows how often each
+Restart Claude Code, then `/skills` and `/agents` list them. No skill is scoped with `paths:`: a path match
+only lists a skill after the first file is touched, which is after the change was designed, and it
+never matches from a parent directory or a sibling worktree. `/skill-doctor` shows how often each
 skill loads and what it costs in context.
 
 Do not also upload these skills to claude.ai: account skills sync into Claude Code as a second
