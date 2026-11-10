@@ -40,12 +40,19 @@ a decision on your machine, not something the install script does:
 ## Install (once per machine)
 
 ```bash
-git clone https://github.com/martin-dehlan/skills ~/code/skills
-~/code/skills/install.sh
+git clone https://github.com/martin-dehlan/skills ~/skills
+~/skills/install.sh
 ```
 
-Skills are symlinked one by one into `~/.claude/skills/`, so `git pull` updates them in place.
-The agent is copied into `~/.claude/agents/`; re-run `install.sh` after pulling agent changes.
+`install.sh` serves the skills from a second worktree, `~/skills-live`, detached at `origin/main`,
+and symlinks each skill from there into `~/.claude/skills/`. Sessions therefore always run what is
+merged, whatever branch is checked out in `~/skills`. After a merge, run `install.sh` again: it
+moves the live copy to the new `origin/main` and re-copies the agent into `~/.claude/agents/`.
+
+Work on skills in `~/skills` or in further worktrees, never in `~/skills-live`. To try a branch
+before it is merged, `./install.sh --dev` links the working tree instead; a plain `./install.sh`
+switches back.
+
 Restart Claude Code, then `/skills` and `/agents` list them. No skill is scoped with `paths:`: a path match
 only lists a skill after the first file is touched, which is after the change was designed, and it
 never matches from a parent directory or a sibling worktree. `/skill-doctor` shows how often each
