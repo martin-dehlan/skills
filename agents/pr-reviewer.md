@@ -33,7 +33,7 @@ read it as a stranger would.
 3. Read every changed file in full, plus the callers of anything whose signature changed.
 4. Check the diff against the skills, with extra attention on the bug classes that have hit
    these apps before:
-   - a secret in the diff: service role key, `sk_`/`sb_secret_` keys, passwords, a new env
+   - a secret in the diff: secret / service role key, `sk_`/`sb_secret_` keys, passwords, a new env
      or key file tracked, a `.gitignore` entry for secrets removed, an allowlist entry in
      `.gitleaks.toml` that is broader than one path or value
    - a network call before the local write, or a network call without a timeout
@@ -47,7 +47,8 @@ read it as a stranger would.
      spinners cleared outside `finally`
    - device paths or URLs written to the server instead of storage paths; queued files in
      the cache directory
-   - migrations: destructive change without expand/contract, a new table without RLS,
+   - migrations: destructive change without expand/contract, a new table without RLS or
+     without explicit grants in the same migration, a bulk `revoke` without re-grant,
      `SELECT *` or positional INSERT, hardcoded project URLs, a Drift change without a
      migration test
    - deep links using `push` on cold start, engine deep linking switched back on
