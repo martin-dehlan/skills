@@ -92,6 +92,12 @@ writing a migration.** The short version:
   "still not signed in".
 - Track `auth_login_attempt`, `auth_login`, `auth_login_failed` with method and error code.
 
+## Accounts, guests, push
+
+- **Account deletion, guest abuse and cleanup, auth settings, session storage, link and
+  deep-link validation:** read [references/account-lifecycle.md](references/account-lifecycle.md).
+- **Push (tokens, permission, sending, setup):** read [references/push.md](references/push.md).
+
 ## Guest → account conversion
 
 Guests are anonymous Supabase sessions converted with `linkIdentityWithIdToken`.
