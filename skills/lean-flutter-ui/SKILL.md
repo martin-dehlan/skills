@@ -72,12 +72,35 @@ scrim (`cs.scrim` with opacity) over photos or video is fine; a gradient scrim i
 
 ## Text and languages
 
-- Design for the longest locale (usually German) and 1.3× system text. Every text inside a
-  fixed-size box gets `maxLines` + `overflow: TextOverflow.ellipsis`.
+- Design for the longest locale (usually German) and the app's tested text-scale range (below).
+  Every text inside a fixed-size box gets `maxLines` + `overflow: TextOverflow.ellipsis`.
+- **Text-scale policy:** clamp once, globally, in `MaterialApp.builder` to
+  `TextScaler.linear(...clamp(1.0, 1.3))` of the system scale, and test screens at 1.0 and 1.3.
+  Do not clamp per screen; a screen that breaks at 1.3 is fixed by layout, not by a local clamp.
+- **Fonts are bundled** as assets (`pubspec.yaml` `fonts:`). Never fetch fonts at runtime
+  (`google_fonts` downloading on first use failed offline and was a top error source).
 - Never use soft hyphens (U+00AD): Flutter draws them as a visible space. Long titles in tight
   grids use the app's hyphenation widget, or a shorter or explicitly hyphenated translation.
 - All copy comes from l10n (`AppLocalizations`), including snackbars and error messages. Push
   notifications are rendered in the recipient's language on the server.
+
+## Large screens, insets, accessibility
+
+- **Token scale is clamped.** Tokens derived from the screen (font as a share of width,
+  spacing as a share of height) use a clamped reference width, e.g. `min(width, 430) / 390`,
+  never the raw width. From API 36 Android 16 ignores orientation and resize locks at 600 dp
+  and wider (foldables, tablets, desktop windows), so a screen can be 800 dp wide: body text
+  must not become 24 to 41 px there.
+- **Max content width** on wide screens: wrap page bodies in a `Center` + `ConstrainedBox`
+  (`maxWidth` as a token, about 560 for forms and lists), or switch to two columns; never
+  stretch a phone layout.
+- **Insets:** the app is edge-to-edge on API 35+ and cannot opt out. Use `SafeArea` or
+  `MediaQuery.viewPaddingOf` for system bars and `viewInsetsOf` for the keyboard; scrolling
+  forms use `resizeToAvoidBottomInset` with a scrollable body so the focused field stays visible.
+- **Accessibility minimum:** every icon-only control has a `tooltip` or `Semantics(label: ...)`
+  from l10n; tap targets are at least 48 dp (use `minimumSize` / `IconButton` defaults, do not
+  shrink them); text and icon contrast at least 4.5:1 against its background in both themes;
+  state is never conveyed by color alone; decorative images are `excludeFromSemantics`.
 
 ## Off-screen renders (share cards, exports)
 
@@ -150,4 +173,5 @@ Exceptions:
 - [ ] Data, loading, offline and error states all designed; skeletons end
 - [ ] Animations use the table values and respect the motion setting and reduce-motion
 - [ ] Copy from l10n; checked in German and at large system text; no soft hyphens
-- [ ] Checked on a small phone (≤ 700 pt high)
+- [ ] Checked on a small phone (≤ 700 pt high) **and** in an 800 dp wide / resized window
+- [ ] Checked at text scale 1.0 and 1.3; icon-only controls labelled, targets ≥ 48 dp
