@@ -1,0 +1,73 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    name: format · analyze · test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0   # the diff checks need the base branch
+
+      - name: set up flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: stable
+          flutter-version: 3.47.5   # pin; bump on purpose
+          cache: true
+
+      # Fails when pubspec.lock is out of date instead of silently rewriting it.
+      - name: pub get
+        run: flutter pub get --enforce-lockfile
+
+      # Stubs for git-ignored files that the build declares (assets, firebase_options).
+      # - name: stub env files
+      #   run: cp .env.example .env
+
+      - name: codegen drift
+        run: |
+          dart run build_runner build
+          git diff --exit-code || { echo "::error::Generated files are out of sync. Run build_runner and commit."; exit 1; }
+
+      - name: format
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: test
+        run: flutter test --reporter=expanded
+
+      # Rules from the skills. Diff checks look at added lines only.
+      - name: ui rules
+        if: github.event_name == 'pull_request'
+        run: bash scripts/check_ui_rules.sh origin/${{ github.base_ref }}
+      - name: layer imports
+        if: github.event_name == 'pull_request'
+        run: bash scripts/check_layers.sh origin/${{ github.base_ref }}
+      - name: file sizes
+        run: bash scripts/check_file_sizes.sh
+      - name: login config
+        run: bash scripts/check_login_config.sh --strict
+      - name: claude helpers
+        run: python3 scripts/check_claude_helpers.py
+
+      # The scripts above are copies; fail when they drift from the skills repo.
+      - name: scripts match the skills repo
+        run: |
+          git clone --depth 1 https://github.com/martin-dehlan/skills "$RUNNER_TEMP/skills"
+          bash "$RUNNER_TEMP/skills/sync.sh" --check .

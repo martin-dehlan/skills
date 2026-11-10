@@ -1,0 +1,28 @@
+version: 2
+
+# Dependabot keeps us honest on dependency drift. Weekly cadence is
+# enough for a single-app codebase — daily noise wins nothing here.
+# Grouped updates collapse the typical "5 patch bumps in unrelated
+# packages" PR into one review.
+updates:
+  - package-ecosystem: pub
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 5
+    groups:
+      flutter-deps-patches:
+        update-types:
+          - patch
+      flutter-deps-minors:
+        update-types:
+          - minor
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3

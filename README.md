@@ -46,6 +46,10 @@ copy under another name, and both would load.
 | `.ui-rules-ignore` | paths that legitimately use fixed pixels (share cards) |
 | `.claude/settings.json` + `.claude/hooks/format-dart.sh` | formats every Dart file Claude edits ([templates](templates/claude/)) |
 
+### CI templates
+
+[templates/ci/](templates/ci/) has `ci.yml` (format, analyze, test, codegen drift, `--enforce-lockfile`, the UI, layer, size, login and helper checks, `sync.sh --check`), `osv-scanner.yml` and `dependabot.yml`; [templates/analysis_options.yaml](templates/analysis_options.yaml) is the strict analyzer config (`unawaited_futures`, `avoid_print`, `cancel_subscriptions`, `close_sinks`). Actions are pinned by commit SHA, the gitleaks download is checksum-verified. Copy them once; Dependabot keeps the pins current.
+
 ## How this repo grows
 
 When a bug turns out to be a class rather than a one-off (it happened twice, or it would
