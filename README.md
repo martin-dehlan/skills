@@ -19,6 +19,19 @@ app's `CLAUDE.md` maps them to its concrete classes and lists its deviations.
 Plus one agent: [`pr-reviewer`](agents/pr-reviewer.md), a read-only review against all six
 skills before a PR.
 
+## What this repo replaces
+
+| Older skill | Replaced by | Do |
+|---|---|---|
+| `flutter-kickstart` (scaffold + `.claude/RULES/`, "info-level findings are OK", `--delete-conflicting-outputs` as mandatory) | `flutter-feature-stack`, `lean-flutter-ui`, `/app-setup` | remove `~/.claude/skills/flutter-kickstart` once an app no longer points at its rule files |
+| `aso-appstore-screenshots` (third-party clone with its own compositing scripts) | [store-screenshots.md](skills/app-release/references/store-screenshots.md) for the pipeline | optional: keep it only if you use its `compose.py`; it duplicates the pipeline and lists a second source for screenshot rules |
+
+Two sources for the same rules contradict each other over time, so keep one. Removing them is
+a decision on your machine, not something the install script does:
+`rm -rf ~/.claude/skills/flutter-kickstart` (and, if wanted, the screenshot skill), then check
+`/skills` lists only one source for architecture, UI and screenshot rules. Apps whose
+`CLAUDE.md` still points at `.claude/RULES/` need that line replaced by the skills list.
+
 ## Install (once per machine)
 
 ```bash
