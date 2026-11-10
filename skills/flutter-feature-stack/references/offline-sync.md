@@ -58,11 +58,38 @@ Operations that are not row upserts get their own outbox tables (`pending_<entit
 
 ## 4. Pull and merge (server → Drift)
 
-- A pull never overwrites a local row with `isSynced = false`. Remote rows land as synced, so
-  a blind `insertOnConflictUpdate` both loses the pending edit and marks it synced, and the
+The pull contract, as concrete as the flusher contract:
+
+- **A pull never overwrites a local row with `isSynced = false`.** Remote rows land as synced,
+  so a blind `insertOnConflictUpdate` both loses the pending edit and marks it synced, and the
   flusher skips it forever. Skip pending rows, or merge field by field.
+- **Incremental, with a cursor.** Store `last_pulled_at` per table and user (the server's
+  `updated_at` of the newest row received, not the device clock). Ask for
+  `updated_at > cursor`, ordered by `updated_at, id`, in pages (e.g. 500); advance the cursor
+  only after a page is committed. Never fetch the whole table on every `watch` call: the
+  watch reads Drift, the pull runs on its own triggers (start, resume, after a flush, a
+  realtime ping).
+- **Single-flight and throttled.** One pull per table at a time (later callers await the
+  running future), at most one per N seconds unless forced by a pull-to-refresh. A pull has a
+  timeout like any network call.
+- **Conflicts, two devices:** server `updated_at` decides, last write wins per row. A row that
+  is `isSynced = false` locally keeps the local edit; its push then overwrites the server row
+  (the server sets `updated_at` with a trigger, never the client). For fields where both
+  edits matter (counters, sets, notes), merge per field and say which in the repository doc
+  comment. Do not invent a vector clock.
+- **Deletes propagate** (see section 5): the server keeps a tombstone (`deleted_at`) for as
+  long as the oldest supported app version may still pull, and the pull applies it to synced
+  rows only. Without tombstones, reconcile ids: after a full page walk, remove local **synced**
+  rows the server no longer lists; never touch `isSynced = false` rows.
 - Pulls run per user id; on an account switch, drop the previous (guest) user's local data,
   then resubscribe.
+
+### Sign-out and account deletion with unsynced rows
+
+Never push under the next user: the outbox rows belong to the user id they were written under.
+On sign-out, try one bounded flush (timeout); if rows remain, tell the user ("N changes are not
+uploaded yet. Sign out anyway?"). On confirm, delete the rows together with the rest of the
+user's local data. A flusher always uses the row's own `user_id`, never the current session's.
 
 ## 5. Deletes
 
@@ -94,5 +121,8 @@ same transaction. Orphaned child rows otherwise fail with 42501 for weeks.
 - A permanent code parks the row after one answer; a transient one retries within budget.
 - Child pushed only after its parent; a second `flush()` awaits the first.
 - Pull with a pending local edit keeps the edit and its `isSynced = false`.
+- Pull with a cursor: second pull asks only for newer rows; a page that fails midway does not advance the cursor; two parallel calls make one request.
+- Row deleted on the server disappears locally if synced, stays if `isSynced = false`.
+- Sign-out with unsynced rows warns, and the next user never receives them.
 - Delete removes local children and queues the server deletes.
 - New sync columns: migration test from the previous schema version.
