@@ -44,7 +44,11 @@ lib/
 
 - File `name.type.dart` → class `NameType`. Suffixes: `.entity` `.model` `.mapper`
   `.repository` `.repository.impl` `.api` `.service` `.provider` `.screen` `.widget`
-  `.table` `.dao` `.routes`. Every new file gets one, common widgets included.
+  `.table` `.dao` `.routes` `.controller` (only if the app already uses it; never both
+  `.provider` and `.controller` in one feature) `.util` `.extension` `.enum` `.constants`
+  `.converter`. Every new file gets one, common widgets included. Plain names are allowed
+  only for `main.dart`, `app.dart`, `firebase_options.dart`, generated files and the app's
+  `l10n` files.
 - Drift lives in `lib/common/database/` (`tables/<name>.table.dart`, `daos/<name>.dao.dart`).
 - One public widget per file. No `Widget _buildX()` methods: extract a class.
 - Limits: widget 300 lines, provider 400, repository/service 300. Over the limit, split
@@ -86,6 +90,7 @@ class ItemsController extends _$ItemsController {
 
 // Screen
 Future<void> _submit() async {
+  if (_saving) return;                              // single-flight: a double tap saves once
   setState(() => _saving = true);
   try {
     await ref.read(itemsControllerProvider.notifier).create(_draft);
@@ -165,6 +170,19 @@ fixing one path, grep all entry points: a fix applied to one path ships the bug 
   underneath.
 - `context.go` for top level and tabs, `context.push` for drill-down.
 
+## Minimum-version gate
+
+Every expand → migrate → contract step in the backend skill needs a way to retire old app
+versions, so the app has one:
+
+- Source: a row `app_config(platform, min_supported_version)` readable by `anon` and
+  `authenticated` (or a remote-config value). Compare with `package_info_plus`, semantic version.
+- Check on start and on resume, with a timeout. Network failure or no row = **let the user
+  in** (never lock people out because the check failed).
+- Below the minimum: a blocking screen with one button to the store page; no way to dismiss.
+- Test: version below, equal, above, and a failing request.
+- Raise the minimum only after the new version has been in the stores for at least two weeks.
+
 ## Code-gen
 
 `dart run build_runner build` after every annotation change (`--delete-conflicting-outputs`
@@ -187,6 +205,22 @@ drift. Never edit `*.g.dart` or `*.freezed.dart`.
   device testing). Every control a flow taps carries `Semantics(identifier: '<area>.<name>')`;
   flows never match localized text.
 
+## Drift migrations
+
+On a schema change run `dart run drift_dev make-migrations`: it writes the schema snapshots
+and generated migration tests under `drift_schemas/` and `test/drift/`. Commit them with the
+change, implement the `stepByStep` migration it asks for, and run the generated test. Do not
+hand-write schema-version tests when the generator exists.
+
+## Environments
+
+- Bundled config lives in `.env` (prod) and, if the app has a dev backend, `.env.dev`; pick
+  with `--dart-define=APP_ENV=dev|prod` (default prod) and load the matching file in one env
+  loader. Never read `Platform.environment` or hardcode a project URL.
+- Every env file has an `.example` with empty values; CI copies the examples into place so the
+  asset declarations resolve (`cp .env.example .env`) and runs no step that needs real values.
+- Dev and prod use different Supabase projects, RevenueCat keys and PostHog projects.
+
 ## Upgrades
 
 After a Flutter, Dart or codegen upgrade, run `flutter test` and one real build.
@@ -206,3 +240,10 @@ python3 scripts/check_claude_helpers.py    # when you renamed or moved a helper
 After renaming or moving a class listed under **Helpers** in CLAUDE.md, update the table in
 the same commit. [`scripts/check_claude_helpers.py`](scripts/check_claude_helpers.py) fails CI
 when a name there no longer exists in the code.
+
+## Tested with
+
+Read from both apps' `pubspec.lock` on 2026-11-10: flutter_riverpod 3.4, riverpod_generator
+4.0, freezed 4.0, drift and drift_dev 2.35, build_runner 2.16, go_router 14.8 (sippd) and 17.5
+(purelofi), CI Flutter 3.47. When an upgrade changes a rule here, change the
+rule and this line in the same PR.
