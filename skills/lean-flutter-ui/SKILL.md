@@ -103,7 +103,7 @@ class ItemCard extends StatelessWidget {
       padding: EdgeInsets.all(context.m),             // token names: see responsive.dart
       decoration: BoxDecoration(
         color: cs.surfaceContainer,
-        borderRadius: BorderRadius.circular(context.w * 0.03),
+        borderRadius: BorderRadius.circular(context.cardRadius),  // a token, never a number
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +125,11 @@ class ItemCard extends StatelessWidget {
 ## Enforcement
 
 [`scripts/check_ui_rules.sh`](scripts/check_ui_rules.sh) checks only lines added since the
-base branch, so old code never blocks a PR. Every app keeps a copy at `scripts/check_ui_rules.sh`
+base branch, so old code never blocks a PR. It covers fixed spacing, padding, font sizes and
+radii, raw colors, gradients, `BackdropFilter`, blur above 10, elevation above 1, emoji,
+`MediaQuery.of(context).size`, `_build` methods and `print`. Nesting depth, hierarchy and
+decorative icons stay a review matter. A base ref that does not exist exits 2, never "OK";
+`--file <path>` checks every line of one file. Every app keeps a copy at `scripts/check_ui_rules.sh`
 and runs it in CI on pull requests (checkout with `fetch-depth: 0`):
 
 ```yaml
