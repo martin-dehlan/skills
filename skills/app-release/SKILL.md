@@ -1,6 +1,6 @@
 ---
 name: app-release
-description: Shipping conventions for mobile apps - Conventional Commits, branches and PRs, keeping secrets out of git (gitleaks hook + CI, .gitignore, leak response), repo visibility (public vs private tooling), versioning, changelog, pre-upload checks, App Store and Google Play review rules, the login release gate with Maestro device tests, store screenshots. Use when committing, opening a PR, bumping a version, testing login or auth flows on a device, preparing a store upload or making store images.
+description: Shipping conventions for mobile apps - Conventional Commits, branches and PRs, keeping secrets out of git (gitleaks hook + CI, .gitignore, leak response), repo visibility (public vs private tooling), versioning, changelog, pre-upload checks, App Store and Google Play review rules, checking every visible change on an emulator or simulator (Claude drives the app with Maestro and looks at screenshots), the login release gate with Maestro device tests, store screenshots. Use when committing, opening a PR, bumping a version, finishing a UI, navigation or native-config change, testing login or auth flows on a device, preparing a store upload or making store images.
 ---
 
 # Shipping an app
@@ -36,10 +36,26 @@ go together. Push after every commit. Never force-push `main`, never `--no-verif
 
 - One self-contained concept per PR. Title = the squash commit (Conventional Commits).
 - Body: summary, `Fixes #n` / `Closes #n` for every issue it resolves (so the backlog closes
-  itself), test plan with what ran and what was checked on a device.
+  itself), test plan with what ran and what was checked on a device (device, OS, flows,
+  screens), or "no device check: no UI change".
 - Squash-merge. Before pushing: `dart format`, `flutter analyze`, `flutter test`,
   `build_runner` when annotations changed, UI check when UI changed, smoke test of the flow.
 - Before opening the PR, run the `pr-reviewer` agent on the branch.
+
+## Check it on the device
+
+Every change a user can see or tap is checked on an emulator or simulator before Claude
+says done: build, drive there with a Maestro flow, screenshot, look. **Follow
+[references/device-verify.md](references/device-verify.md)** (the loop, which flow tags a
+change runs, flow rules that came from failures). Short form:
+
+```bash
+bash scripts/run_e2e.sh ios --tags smoke                  # build, install, smoke flow
+bash scripts/run_e2e.sh ios --no-build build/e2e/scratch.yaml
+xcrun simctl io booted screenshot build/e2e/shot.png      # then open it with Read
+```
+
+Not run means not passed: without a reachable device, say so and list what is left.
 
 ## Secrets never reach git
 
@@ -114,8 +130,9 @@ the issue or PR number.
    [references/device-testing.md](references/device-testing.md):
    - `bash scripts/check_login_config.sh` passes (entitlements, URL schemes, deep-link flags,
      SHA-1 fingerprints).
-   - The Maestro auth flows pass on the Android emulator (release APK) and the iOS simulator:
-     email, Google (Android), guest → new / existing account, sign-out and deletion landing.
+   - The Maestro auth flows pass on the Android emulator (release APK) and the iOS simulator
+     (`bash scripts/run_e2e.sh <platform>`, all flows): email, Google (Android),
+     guest → new / existing account, sign-out and deletion landing, deep-link cold start.
    - If the release touches the paywall, purchases or the entitlement webhook: the Test Store
      purchase flow passes and the server rows follow (device testing, purchases).
      Claude runs them when an emulator or simulator is reachable; otherwise it says so.

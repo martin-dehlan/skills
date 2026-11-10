@@ -73,6 +73,11 @@ Flows live in `e2e/`, one file per transition. The standard set for an app with 
 | `auth_guest_to_new.yaml` | guest → new account advances on the first try |
 | `auth_guest_to_existing.yaml` | guest → existing account offers sign-in and then shows that account's data |
 | `auth_delete_account.yaml` (dev only) | deletion lands on the welcome screen |
+| `smoke.yaml` | launch → home ready; the flow every visible change runs |
+| `deep_link_cold_start.yaml` (apps with deep links) | `stopApp` + `openLink` opens the target, not the home screen |
+
+Every flow has `tags:` (`auth`, `router`, `purchase`, `smoke`), so a change runs only its
+tags ([device-verify.md](device-verify.md) maps changes to tags).
 
 Selectors are Semantics identifiers, never localized text: every control a flow taps gets
 `Semantics(identifier: 'auth.google', child: ...)` (pattern `<area>.<name>`), and the flow
@@ -81,9 +86,21 @@ uses `id: "auth.google"`. Native views (the Google account picker) are matched b
 ```yaml
 # e2e/auth_email_login.yaml
 appId: <application id>
+tags: [auth]
 ---
 - launchApp:
     clearState: true
+# iOS keeps the keychain across clearState: sign out a surviving session.
+- runFlow:
+    when:
+      visible:
+        id: "home.root"
+    file: common/sign_out.yaml
+# Cold start + first fetch; CI emulators need the long timeout.
+- extendedWaitUntil:
+    visible:
+      id: "welcome.signIn"
+    timeout: 90000
 - tapOn:
     id: "welcome.signIn"
 - tapOn:
@@ -93,14 +110,17 @@ appId: <application id>
     id: "auth.password"
 - inputText: ${E2E_PASSWORD}
 - tapOn:
-    id: "auth.submit"
-- assertVisible:
-    id: "home.root"
+    id: "auth.submit"       # no hideKeyboard: it can submit the form on its own
+- extendedWaitUntil:
+    visible:
+      id: "home.root"
+    timeout: 20000
 ```
 
 ```yaml
 # e2e/auth_google_login.yaml (Android, emulator started from the logged-in snapshot)
 appId: <application id>
+tags: [auth]
 ---
 - launchApp:
     clearState: true
@@ -114,15 +134,14 @@ appId: <application id>
 ### Run and read the result
 
 ```bash
-set -a; source .env.e2e; set +a
-maestro --device <id> test e2e/ --format junit --output build/e2e-report.xml \
-  -e E2E_EMAIL="$E2E_EMAIL" -e E2E_PASSWORD="$E2E_PASSWORD" -e E2E_GOOGLE_ACCOUNT="$E2E_GOOGLE_ACCOUNT"
+bash scripts/run_e2e.sh android --tags auth
+bash scripts/run_e2e.sh ios --tags auth
 ```
 
-Device ids: `adb devices` (Android), `xcrun simctl list devices booted` (iOS). Run once per
-platform. Claude reads `build/e2e-report.xml`, and for every failure the screenshot Maestro
-saves under `~/.maestro/tests/<timestamp>/`, then reports only what failed, with the flow, the
-step and what the screen showed.
+[`../scripts/run_e2e.sh`](../scripts/run_e2e.sh) finds or boots the device, builds and
+installs, passes every `E2E_*` variable from `.env.e2e`, and prints `passed n/m` plus one line
+per failure. Run once per platform. For every failure Claude opens the screenshot under
+`build/e2e/out/` and reports the flow, the step and what the screen showed.
 
 ### CI (optional)
 

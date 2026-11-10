@@ -30,6 +30,9 @@ read it as a stranger would.
      `bash scripts/check_login_config.sh`, and the Maestro auth flows in `e2e/` when an
      emulator or simulator is reachable (see the app-release skill, device testing). If
      none is reachable, list the flows as "not run"; never report them as passed.
+   - if the diff changes anything a user sees or taps: `bash scripts/run_e2e.sh <platform>
+     --tags <tags of the change>` (app-release skill, device verify), and check that the PR
+     test plan names the device check or says why there is none.
 3. Read every changed file in full, plus the callers of anything whose signature changed.
 4. Check the diff against the skills, with extra attention on the bug classes that have hit
    these apps before:
@@ -51,6 +54,10 @@ read it as a stranger would.
      `SELECT *` or positional INSERT, hardcoded project URLs, a Drift change without a
      migration test
    - deep links using `push` on cold start, engine deep linking switched back on
+   - e2e flows: coordinate taps (`point:`), localized text matched on Flutter widgets, a
+     tap right after `launchApp` without a wait, `hideKeyboard` before submit, an auth flow
+     that assumes a fresh session on iOS, a flow without `tags:`, a tapped control without
+     a Semantics identifier
    - copy outside l10n, soft hyphens, text in fixed boxes without `maxLines`
    - analytics: an email, name, path or free text in an event or person property; a send
      that can throw or is awaited on a user path; an event name outside the constants
