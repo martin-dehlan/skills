@@ -112,8 +112,9 @@ the issue or PR number.
 3. **Login release gate.** Widget tests do not count here: they fake the provider, and login
    breaks inside native sheets and platform configuration. Follow
    [references/device-testing.md](references/device-testing.md):
-   - `bash scripts/check_login_config.sh` passes (entitlements, URL schemes, deep-link flags,
-     SHA-1 fingerprints).
+   - `bash scripts/check_login_config.sh --strict` passes (entitlements, URL schemes, deep-link
+     flags, SHA-1 fingerprints, Google nonce). `--strict` turns a missing SHA-1 list into a
+     failure; use it in CI too.
    - The Maestro auth flows pass on the Android emulator (release APK) and the iOS simulator:
      email, Google (Android), guest → new / existing account, sign-out and deletion landing.
    - If the release touches the paywall, purchases or the entitlement webhook: the Test Store
