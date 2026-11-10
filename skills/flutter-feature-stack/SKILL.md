@@ -240,6 +240,7 @@ when a name there no longer exists in the code.
 
 ## Tested with
 
-Flutter 3.47, Dart 3.10+, flutter_riverpod 3 with riverpod_generator, freezed 3, drift 2.x with
-drift_dev, go_router 16+, build_runner 2.15+. When an upgrade changes a rule here, change the
+Read from both apps' `pubspec.lock` on 2026-11-10: flutter_riverpod 3.4, riverpod_generator
+4.0, freezed 4.0, drift and drift_dev 2.35, build_runner 2.16, go_router 14.8 (sippd) and 17.5
+(purelofi), CI Flutter 3.47. When an upgrade changes a rule here, change the
 rule and this line in the same PR.
