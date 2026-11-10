@@ -52,7 +52,7 @@ change runs, flow rules that came from failures). Short form:
 ```bash
 bash scripts/run_e2e.sh ios --tags smoke                  # build, install, smoke flow
 bash scripts/run_e2e.sh ios --no-build build/e2e/scratch.yaml
-xcrun simctl io booted screenshot build/e2e/shot.png      # then open it with Read
+xcrun simctl io booted screenshot "$PWD/build/e2e/shot.png"   # then open it with Read
 ```
 
 Not run means not passed: without a reachable device, say so and list what is left.

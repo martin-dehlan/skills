@@ -15,7 +15,10 @@ what is left to check.
 ## The loop
 
 1. **Device and build.** `bash scripts/run_e2e.sh ios --tags smoke` builds, installs, finds
-   or boots the device and runs the smoke flow. After the first build, use `--no-build`
+   or boots the device and runs the smoke flow. A fresh clone or worktree lacks the
+   git-ignored config the build needs (`.env*`, `GoogleService-Info.plist`,
+   `google-services.json`, `firebase_options.dart`); copy them from the main checkout first,
+   never commit them. After the first build, use `--no-build`
    until Dart or native code changes again. Android is the release APK (what ships), iOS a
    debug simulator build.
 2. **Reach the screen** with a scratch flow in `build/e2e/scratch.yaml` (git-ignored with
@@ -41,9 +44,13 @@ what is left to check.
 3. **Look at it.** Take a screenshot and open it with the Read tool:
 
    ```bash
-   xcrun simctl io booted screenshot build/e2e/shot.png          # iOS
+   xcrun simctl io booted screenshot "$PWD/build/e2e/shot.png"   # iOS: absolute path
    adb exec-out screencap -p > build/e2e/shot.png                 # Android
+   sips -Z 900 build/e2e/shot.png --out build/e2e/shot.png        # smaller image to read
    ```
+
+   `simctl` resolves a relative path in its own directory and fails with "The folder
+   doesn't exist".
 
    Check what the change promised: layout, text, empty and error state, nothing cut off, the
    keyboard not covering the button. Also dark mode or a large font when the change touches
@@ -113,6 +120,9 @@ both platforms; everything else on one is enough for a feature branch.
   size or with a banner. An icon-only tab gets an id instead.
 - **Text selectors only for native views** (account picker, system dialogs, store sheets).
   Everything Flutter renders is matched by id.
+- **A fresh install proves less.** On a new simulator the app starts signed out, so a smoke
+  flow ends on the welcome screen and never touches the tabs. Say which state the run
+  covered; signed-in screens need the test user from `.env.e2e`.
 - **A wedged emulator hangs Maestro**, on iOS runs too: `adb devices` still says `device`
   while `adb shell` never returns. `run_e2e.sh` checks this and stops; free or restart the
   emulator. If another session is using it, do not kill it.
