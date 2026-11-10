@@ -4,7 +4,7 @@ set -uo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 L="$ROOT/skills/flutter-feature-stack/scripts/check_layers.sh"
 S="$ROOT/skills/flutter-feature-stack/scripts/check_file_sizes.sh"
-app=$(mktemp -d); trap 'rm -rf "$app"' EXIT; cd "$app"
+app=$(mktemp -d); trap 'rm -rf "$app"' EXIT; cd "$app" || exit 1
 git init -q -b main; git config user.email t@t; git config user.name t
 mkdir -p lib/features/a/presentation lib/features/a/domain lib/features/a/controller
 echo "class A {}" > lib/features/a/domain/a.entity.dart

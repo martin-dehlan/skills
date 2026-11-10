@@ -19,4 +19,4 @@ then change the date. The skills link here instead of repeating a value.
 | `google_sign_in` | 7.x: `initialize(nonce:)` available from 7.2.0 | pub.dev changelog |
 | RevenueCat `test_` key | fatal error in a release build | RevenueCat docs, Test Store |
 
-Link rows from the skills with `[platform-facts](.../platform-facts.md)`; never copy the value.
+Link rows from the skills with `[platform-facts]` with a relative link; never copy the value.

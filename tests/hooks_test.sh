@@ -2,7 +2,7 @@
 # Fixture test for the Claude hooks. Run: bash tests/hooks_test.sh
 set -uo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd); H="$ROOT/templates/claude/hooks"
-app=$(mktemp -d); trap 'rm -rf "$app"' EXIT; cd "$app"
+app=$(mktemp -d); trap 'rm -rf "$app"' EXIT; cd "$app" || exit 1
 git init -q -b main; git config user.email t@t; git config user.name t
 mkdir -p scripts lib/features/a/domain lib/features/a/presentation
 # stub check: fails for any file that mentions "flutter/material" (the real checks are tested on their own)
