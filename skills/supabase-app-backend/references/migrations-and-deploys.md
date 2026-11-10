@@ -51,11 +51,16 @@ breaks every image in every older build at once.
 - `42501 permission denied for table` → a missing **GRANT**; RLS never even ran.
 - `new row violates row-level security policy` → a **policy** problem (or, for storage
   uploads, a missing SELECT policy, see the main skill).
-- Keep the default privileges that grant DML on new `public` tables to `authenticated` and
-  `service_role`; tighten access with RLS, never by revoking grants in a "hardening"
-  migration. `service_role` also needs the table GRANT before its RLS bypass applies, so edge
-  functions break too when grants go missing. Network-only flows show it first; flows backed
-  by a local cache hide it.
+- **Never rely on default privileges, and never bulk-revoke.** Default grants on new `public`
+  tables are being switched off, and one app's security audit revoked them on purpose because
+  `TRUNCATE` ignores RLS. Both are fine if every migration grants what its table needs, per
+  role, least privilege (no `truncate`, no `references`, `delete` only when a policy allows it),
+  plus the sequences. A "hardening" migration that revokes must re-grant in the same file.
+  `service_role` also needs the table GRANT before its RLS bypass applies, so edge functions
+  break too when grants go missing. Network-only flows show it first; flows backed by a local
+  cache hide it.
+- Test it: with automatic exposure off, the table must still work. In a local project run the
+  migration, then call the table as `authenticated` through the REST API.
 
 ## 5. Triggers, cron and pg_net
 
@@ -77,6 +82,7 @@ breaks every image in every older build at once.
 
 - [ ] Additive, or the expand step of a planned expand/contract
 - [ ] RLS enabled + policies for every new table; RLS tests added
+- [ ] Explicit `grant`s per role in the same file; no reliance on default privileges, no bulk revoke without re-grant
 - [ ] No `SELECT *`, no positional INSERT, no hardcoded URLs
 - [ ] Drift mirror + `schemaVersion` + migration test updated (if mirrored)
 - [ ] Old app versions keep working (state the oldest version you checked against)

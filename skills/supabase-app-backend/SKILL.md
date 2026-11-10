@@ -21,16 +21,21 @@ CLAUDE.md.
 ## Secrets: two files, the split matters
 
 - `.env` is bundled as an asset, so **anyone can read it**. Only publishable keys:
-  `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `POSTHOG_*`, RevenueCat public keys.
+  `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `POSTHOG_*`, RevenueCat public keys.
 - `.env.tools` is never bundled; only `tool/` or `scripts/` read it. It holds
-  `SUPABASE_SERVICE_ROLE_KEY` and `SUPABASE_DB_PASSWORD`.
-- Edge function secrets (`RESEND_API_KEY`, the service role) live only in
+  `SUPABASE_SECRET_KEY` and `SUPABASE_DB_PASSWORD`.
+- **Key names:** the publishable key (`sb_publishable_...`) replaces the legacy `anon` JWT, the
+  secret key (`sb_secret_...`) replaces `service_role`. Supabase deprecates the legacy keys
+  (end of 2026) and they cannot be rotated independently of the JWT secret. Move a project
+  over in the dashboard, switch the env names, then disable the legacy keys. The roles keep
+  their names in SQL (`anon`, `authenticated`, `service_role`).
+- Edge function secrets (`RESEND_API_KEY`, the secret key) live only in
   `supabase secrets set`.
 - Each env file ships an `.example` with empty values. `Env.load()` throws if a tools key
   turns up in `.env`.
 - **Both files are git-ignored**, bundled or not; only the `.example` files are tracked.
   gitleaks (hook + CI) and `scripts/check_secrets.sh` guard this: see the app-release skill,
-  *Secrets never reach git*. A leaked service role key bypasses all RLS: rotate it at once.
+  *Secrets never reach git*. A leaked secret (service role) key bypasses all RLS: rotate it at once.
 
 ## Database changes
 
@@ -40,9 +45,12 @@ writing a migration.** The short version:
 1. A new timestamped file in `supabase/migrations/`. Never edit, squash or re-baseline a
    migration that ran on prod: a squash once silently removed grants, storage policies and
    push triggers in production.
-2. New `public` tables are reachable by the API roles through default privileges, so **RLS is
-   the only gate**: every new table enables RLS with explicit policies in the same migration.
-   Server-only tables: RLS on, no client policies.
+2. **Never rely on default privileges.** Supabase stops exposing new tables to the Data API
+   automatically (new projects since 2026-05-30; existing projects were announced for
+   2026-10-30, check yours). Every new table gets, in the same migration: `create table`,
+   `grant` per role with least privilege (sequences too), `enable row level security`, and
+   explicit policies. Start from [references/migration-template.sql](references/migration-template.sql).
+   Server-only tables: RLS on, no client policies, grant to `service_role` only.
 3. Policies use `(select auth.uid())`, not a bare `auth.uid()`, and every column a policy
    filters on has an index. Guests are `authenticated` too (anonymous sessions).
 4. `security definer` functions: `set search_path = ''` and schema-qualified names.
@@ -69,7 +77,11 @@ writing a migration.** The short version:
 ## Edge functions (Deno)
 
 - One function per job in `supabase/functions/<name>/`; shared code in `_shared/`.
-- Verify the JWT unless it is a webhook. Webhooks (RevenueCat, Postgres triggers via
+- Verify the JWT unless it is a webhook: leave `verify_jwt` on (the default) for client calls,
+  turn it off only for webhooks and check their shared secret in code. Current Supabase docs
+  wrap handlers with `withSupabase` and read keys from `SUPABASE_SECRET_KEYS`; if the project
+  already uses that wrapper, follow it, otherwise keep the plain `Deno.serve` handler and read
+  the secret key from the function's env. Webhooks (RevenueCat, Postgres triggers via
   `pg_net`) check their shared secret first. The RevenueCat webhook and the `is_pro`
   grant: revenuecat-purchases, server entitlement.
 - Service role only inside the function; re-check ownership in code.
