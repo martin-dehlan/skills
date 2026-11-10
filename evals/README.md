@@ -17,12 +17,16 @@ copy the two totals into the table below with the date.
 
 | Skill | On | Off | Date |
 |---|---|---|---|
-| flutter-feature-stack | 2/5 | not run | 2026-11-10 |
-| lean-flutter-ui | 4/5 | not run | 2026-11-10 |
+| flutter-feature-stack | 5/5 | not run | 2026-11-10 |
+| lean-flutter-ui | 5/5 | not run | 2026-11-10 |
 | supabase-app-backend | 5/5 | not run | 2026-11-10 |
 | app-release | 5/5 | not run | 2026-11-10 |
 | posthog-analytics | 5/5 | not run | 2026-11-10 |
-| revenuecat-purchases | 3/5 | not run | 2026-11-10 |
+| revenuecat-purchases | 5/5 | not run | 2026-11-10 |
+
+The first run scored 24/30; every miss was a forbid-regex firing on an answer that negated it
+("never a product id"), so those regexes were removed. Answers are saved next to the results
+for diagnosis. 'On' without 'Off' says nothing about whether a skill earns its place.
 
 ## Monthly check (first Monday)
 

@@ -18,6 +18,7 @@ while IFS=$'\t' read -r skill prompt expect forbid; do
   [ -n "$only" ] && [ "$skill" != "$only" ] && continue
   answer=$(cd "$(mktemp -d)" && claude -p "$prompt" ${model[@]+"${model[@]}"} 2>/dev/null) || answer=""
   ok=1
+  printf '%s\n' "$answer" > "$here/results/$(date +%F)-$mode-$((total+1)).txt"
   printf '%s' "$answer" | grep -Eiq "$expect" || ok=0
   if [ -n "$forbid" ] && printf '%s' "$answer" | grep -Eiq "$forbid"; then ok=0; fi
   total=$((total+1)); [ $ok -eq 1 ] && pass=$((pass+1))

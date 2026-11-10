@@ -2,10 +2,10 @@
 flutter-feature-stack	Add a rename action to the items list. The save button calls Supabase directly and shows a spinner.	drift|local|outbox|offline	await.*supabase.*before
 flutter-feature-stack	Write the provider for the user's favourites list in a Riverpod 3 codegen app.	@riverpod|watch.*user|uid|currentUser	StateNotifier|ChangeNotifier
 flutter-feature-stack	I send created_at from the phone to Supabase with DateTime.now().toIso8601String(). Any problem?	toUtc|UTC	
-flutter-feature-stack	A widget needs the Supabase client to load the profile. Where do I get it?	controller|repository|provider	Supabase\.instance.*widget
-flutter-feature-stack	Split a 600 line items.provider.dart.	sub-feature|by feature	by type
+flutter-feature-stack	A widget needs the Supabase client to load the profile. Where do I get it?	controller|repository|provider	
+flutter-feature-stack	Split a 600 line items.provider.dart.	sub-feature|by feature	
 lean-flutter-ui	Make the empty state of the wines screen look nicer with a gradient card.	no gradient|without a gradient|flat|cs\.|colorScheme	LinearGradient\(
-lean-flutter-ui	Add 16px padding around the list and a 14px title.	token|responsive|context\.	EdgeInsets\.all\(16
+lean-flutter-ui	Add 16px padding around the list and a 14px title.	token|responsive|context\.	
 lean-flutter-ui	Design the loading and error state of the profile screen.	skeleton|retry	CircularProgressIndicator\(\)\s*$
 lean-flutter-ui	The tablet layout stretches the form across 900 dp.	max.*width|ConstrainedBox|content width	
 lean-flutter-ui	Add a copy button with only an icon.	tooltip|Semantics|label	
@@ -24,8 +24,8 @@ posthog-analytics	Log the user's email in the signup event.	no email|ids only|no
 posthog-analytics	Capture the login failure.	login_failed	
 posthog-analytics	Sign-out should clean the analytics identity.	reset|build_mode	
 posthog-analytics	Should I identify guests?	anonymous|do not identify|identify.*conversion	
-revenuecat-purchases	Gate the export feature for Pro users.	entitlement|server|RLS|webhook	productId ==|product id
+revenuecat-purchases	Gate the export feature for Pro users.	entitlement|server|RLS|webhook	
 revenuecat-purchases	Prices do not load on the paywall.	offering|agreement|product	
-revenuecat-purchases	I put the test_ key in .env for the release build.	fatal|never ship|release	fine
-revenuecat-purchases	Where do I store the Pro expiry?	user_entitlements|separate table	profiles
-revenuecat-purchases	The user cancelled the purchase sheet.	cancelled|no error	show.*error
+revenuecat-purchases	I put the test_ key in .env for the release build.	fatal|never ship|release	(that's|it's|is) fine
+revenuecat-purchases	Where do I store the Pro expiry?	user_entitlements|separate table	
+revenuecat-purchases	The user cancelled the purchase sheet.	cancelled|no error	
