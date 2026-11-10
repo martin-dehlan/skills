@@ -60,6 +60,27 @@ Write (not through Bash), and a separate git worktree needs its own session in t
 
 [templates/ci/](templates/ci/) has `ci.yml` (format, analyze, test, codegen drift, `--enforce-lockfile`, the UI, layer, size, login and helper checks, `sync.sh --check`), `osv-scanner.yml` and `dependabot.yml`; [templates/analysis_options.yaml](templates/analysis_options.yaml) is the strict analyzer config (`unawaited_futures`, `avoid_print`, `cancel_subscriptions`, `close_sinks`). Actions are pinned by commit SHA, the gitleaks download is checksum-verified. Copy them once; Dependabot keeps the pins current.
 
+## Claude Code environment for app repos
+
+Measured over 31 sessions: about 70k tokens of context before the first reply, around 13k of it
+from plugins and connectors that have nothing to do with Flutter work; 134 skills in a listing
+capped at 30,000 characters; third-party plugin hooks adding about a second to every Bash call.
+Skills in this repo only work well when the listing is short enough to read them.
+
+- **Enable plugins per project, not per user.** Keep the user settings lean and put
+  `enabledPlugins` in the app's `.claude/settings.json` ([template](templates/claude/settings.json)
+  shows the shape). Web-framework plugins (Vercel, Next.js), chain and trading plugins, and
+  design-tool connectors do not belong in a Flutter app repo.
+- **Switch off connectors you do not use there** (`/mcp`): each one adds tool names to every
+  session.
+- **Check what a plugin sends.** One plugin posts the full text of every Bash command to its
+  vendor's telemetry endpoint; its opt-out only covers prompt text. Read a plugin's hooks before
+  you enable it, and never put a secret value in a command line (read it from an env file).
+- **Watch the budget.** `/skill-doctor` reports skills cut from the listing and descriptions that
+  are too long; descriptions plus `when_to_use` are cut at 1,536 characters, the whole listing
+  at about 1 % of the context window.
+- **Target:** a fresh session in an app repo lists fewer than 30 skills.
+
 ## How this repo grows
 
 When a bug turns out to be a class rather than a one-off (it happened twice, or it would
