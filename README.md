@@ -47,6 +47,15 @@ copy under another name, and both would load.
 | `e2e/` + `.env.e2e` (git-ignored) | Maestro auth flows and their test credentials |
 | `.ui-rules-ignore` | paths that legitimately use fixed pixels (share cards) |
 
+### Path-scoped rules
+
+[templates/claude/rules/](templates/claude/rules/) holds short rules bound to a file type
+(`dart-ui.md`, `migrations.md`, `generated.md`). Copy them to `.claude/rules/` in the app.
+Claude loads one when it reads or edits a matching file, so the rule is in context without a
+skill call. The globs start with `**/`, so they also match when the session runs one level above
+the app. Limits: the rule loads only after a matching file is touched through Read, Edit or
+Write (not through Bash), and a separate git worktree needs its own session in that worktree.
+
 ## How this repo grows
 
 When a bug turns out to be a class rather than a one-off (it happened twice, or it would
