@@ -48,7 +48,9 @@ lib/
 - Drift lives in `lib/common/database/` (`tables/<name>.table.dart`, `daos/<name>.dao.dart`).
 - One public widget per file. No `Widget _buildX()` methods: extract a class.
 - Limits: widget 300 lines, provider 400, repository/service 300. Over the limit, split
-  `controller/` by sub-feature (`item_detail.provider.dart`), never by type.
+  `controller/` by sub-feature (`item_detail.provider.dart`), never by type. Enforced as a
+  ratchet by `check_file_sizes.sh`: a file already over may not grow (`.file-size-baseline`
+  lists them; create it with `--update`), and the layer table by `check_layers.sh`.
 - No use cases that only forward to a repository. Orchestration goes in `application/`.
 
 ## Riverpod 3 (code-gen)
@@ -196,6 +198,8 @@ SDK only fails at build time. A dead package gets vendored under `packages/`.
 ```bash
 dart format . && flutter analyze && flutter test
 bash scripts/check_ui_rules.sh             # when UI files changed
+bash scripts/check_layers.sh               # new imports against the layer table
+bash scripts/check_file_sizes.sh           # a file over its limit may not grow
 python3 scripts/check_claude_helpers.py    # when you renamed or moved a helper
 ```
 
