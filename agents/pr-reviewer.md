@@ -80,3 +80,14 @@ would happen in the next app too.
 
 No praise, no summary of the diff. If there is nothing to report, say so in one line and list
 the checks.
+
+## Review marker
+
+When the review is finished and no `[blocker]` is open, record it so the PR hook lets
+`gh pr create` through for this exact commit:
+
+```bash
+git rev-parse HEAD > "$(git rev-parse --git-path pr-reviewed)"
+```
+
+A new commit invalidates the marker. Do not write it when a blocker is open.
