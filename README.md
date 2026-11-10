@@ -41,12 +41,11 @@ copy under another name, and both would load.
 | File | Purpose |
 |---|---|
 | `CLAUDE.md` | what the app is, its deviations (they win), **Helpers** (concrete classes for the skills' generic names), commands, docs. Start from [templates/CLAUDE.app.md](templates/CLAUDE.app.md) |
-| `scripts/check_ui_rules.sh`, `scripts/check_login_config.sh`, `scripts/check_claude_helpers.py`, `scripts/check_secrets.sh` | copies of the checks; CI runs them |
-| `.gitleaks.toml`, `scripts/git-hooks/pre-commit`, `scripts/install-git-hooks.sh`, `.github/workflows/secret-scan.yml`, secrets block in `.gitignore` | keep secrets out of git ([templates](templates/secrets/)) |
+| files listed in [sync.manifest](sync.manifest) | copies of the checks, hooks and templates. `./sync.sh <app-dir>` rolls them in (stamped `# skills@<sha>`), `./sync.sh --check <app-dir>` exits 1 on drift. Seed files (`CLAUDE.md`, `.gitleaks.toml`, `.claude/settings.json`, `secret-scan.yml` with pinned action SHAs) are copied once and then belong to the app |
+| secrets block in `.gitignore` | from [templates/secrets/gitignore-secrets.txt](templates/secrets/gitignore-secrets.txt); not synced, merge by hand |
 | `android/google-sha1.txt` | SHA-1 fingerprints registered in Google Cloud (debug, upload, Play App Signing) |
 | `e2e/` + `.env.e2e` (git-ignored) | Maestro auth flows and their test credentials |
 | `.ui-rules-ignore` | paths that legitimately use fixed pixels (share cards) |
-| `.claude/settings.json` + `.claude/hooks/format-dart.sh` | formats every Dart file Claude edits ([templates](templates/claude/)) |
 
 ## How this repo grows
 

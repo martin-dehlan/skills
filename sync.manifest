@@ -1,0 +1,14 @@
+# Files that sync.sh rolls into an app. Columns: mode, source (in this repo), destination (in the app).
+#   managed  overwritten on every sync, stamped "# skills@<sha>"; `sync.sh --check` fails when the copy differs
+#   seed     copied only when missing, never overwritten (the app owns it afterwards)
+managed	skills/lean-flutter-ui/scripts/check_ui_rules.sh	scripts/check_ui_rules.sh
+managed	skills/app-release/scripts/check_login_config.sh	scripts/check_login_config.sh
+managed	skills/app-release/scripts/check_secrets.sh	scripts/check_secrets.sh
+managed	skills/flutter-feature-stack/scripts/check_claude_helpers.py	scripts/check_claude_helpers.py
+managed	templates/secrets/install-git-hooks.sh	scripts/install-git-hooks.sh
+managed	templates/secrets/pre-commit	scripts/git-hooks/pre-commit
+seed	templates/secrets/secret-scan.yml	.github/workflows/secret-scan.yml
+managed	templates/claude/hooks/format-dart.sh	.claude/hooks/format-dart.sh
+seed	templates/secrets/gitleaks.toml	.gitleaks.toml
+seed	templates/claude/settings.json	.claude/settings.json
+seed	templates/CLAUDE.app.md	CLAUDE.md
