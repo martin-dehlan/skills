@@ -39,7 +39,7 @@ rows the app does not have.
 | Pro repository / entitlement | <repository + path>, entitlement `<id>`, webhook `<function>` |
 | test helpers | `test/helpers/<files>` |
 | fixed-canvas renders (`.ui-rules-ignore`) | <paths> |
-| e2e | app id `<id>`, flows in `e2e/`, credentials in `.env.e2e`, Supabase test users |
+| e2e | app id `<id>`, flows in `e2e/` (tags), home root id `<id>`, credentials in `.env.e2e`, Supabase test users, simulator `E2E_SIM` / AVD `E2E_AVD` |
 
 ## Commands
 
@@ -49,6 +49,7 @@ bash scripts/check_secrets.sh              # secret hygiene (hook, CI, .gitignor
 dart run build_runner build
 dart format . && flutter analyze && flutter test
 bash scripts/check_ui_rules.sh
+bash scripts/run_e2e.sh ios --tags smoke   # device check (app-release skill, device verify)
 ```
 
 ## Docs

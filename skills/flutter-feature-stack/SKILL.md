@@ -198,7 +198,11 @@ SDK only fails at build time. A dead package gets vendored under `packages/`.
 dart format . && flutter analyze && flutter test
 bash scripts/check_ui_rules.sh             # when UI files changed
 python3 scripts/check_claude_helpers.py    # when you renamed or moved a helper
+bash scripts/run_e2e.sh ios --tags smoke   # when a user can see or tap the change
 ```
+
+A visible change is not done until it ran on a device: reach the screen with a flow, take a
+screenshot, look at it (app-release skill, device verify). No device reachable → say so.
 
 After renaming or moving a class listed under **Helpers** in CLAUDE.md, update the table in
 the same commit. [`scripts/check_claude_helpers.py`](scripts/check_claude_helpers.py) fails CI
