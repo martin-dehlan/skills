@@ -66,6 +66,11 @@ provided through Riverpod and overridden in `main()` with the initialised instan
 - **`source` on every step of a funnel that has more than one entry point** (paywall,
   sign-in gate), plumbed from the call site through the route to every event. The
   aggregate conversion hides which entry converts.
+- **Shared names** (one name per thing, in every skill and app; the app's events constants
+  class holds them): `login_started` · `login_completed` · `login_failed` (property `method`,
+  `error_code`), `paywall_viewed`, `purchase_started` · `purchase_completed` ·
+  `purchase_cancelled` · `purchase_failed`, `sync_failed`. Errors are not an event of our own:
+  they are PostHog's `$exception` from error tracking. `grep` should find each name once.
 - Count outcomes, not only starts: `_started`, `_completed`, `_cancelled`, `_failed` with a
   `reason`. A user closing a sheet is `_cancelled`, not `_failed`.
 - One-shot activation markers (`first_rating`) are guarded by a persisted flag.
@@ -80,6 +85,20 @@ provided through Riverpod and overridden in `main()` with the initialised instan
   Sign-in method, platform, signup date and `is_guest` are fine.
 - A `beforeSend` scrubber replaces email addresses and file paths in every string, however
   deep. Error messages are written by whatever code failed and do carry them.
+- **Consent decision (recorded):** analytics is **on by default with an opt-out toggle**,
+  because events carry ids only, no advertising, no cross-app tracking, no data sold or shared
+  beyond PostHog (EU region) as processor. Hold all of that or switch to **opt-in**: required
+  as soon as session replay is on, an advertising or attribution SDK is added, or the privacy
+  page can no longer say "ids only". Opt-in means: no `setup()` network traffic until the user
+  accepts a first-run choice, the same flag in `main()`. This is an engineering default, not
+  legal advice; the owner confirms it for the stores' regions.
+- **Guests:** do not call `identify` for anonymous Supabase sessions. PostHog's own anonymous
+  id carries them (anonymous events are billed lower than identified ones); identify on
+  sign-in or conversion, which merges the earlier events. Apps that already identify guests
+  with `is_guest: true` may keep it; the rule above about re-identifying on conversion then
+  applies.
+- **Account deletion** deletes the person in PostHog (API `DELETE /persons/` by `distinct_id`,
+  or the project's data-deletion request) and calls `reset()`.
 - Opt-out toggle in Settings, stored on the device (SharedPreferences). Read it in `main()`
   and apply it before the first event; `setOptOut(true)` calls `Posthog().disable()`,
   which also stops session replay. The service also gates its own calls on the flag.
