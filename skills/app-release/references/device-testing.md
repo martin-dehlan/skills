@@ -18,7 +18,7 @@ emulator or simulator is reachable, it says so and lists what is left to run.
 ## 1. Config check
 
 ```bash
-bash scripts/check_login_config.sh
+bash scripts/check_login_config.sh --strict   # CI and release; without --strict a missing SHA-1 list only warns
 ```
 
 [`../scripts/check_login_config.sh`](../scripts/check_login_config.sh) checks only what the
@@ -26,7 +26,9 @@ app uses: engine deep linking off (with `app_links`), the Apple sign-in capabili
 entitlements file, the reversed Google client ID as URL scheme, and the debug and upload key
 SHA-1 against `android/google-sha1.txt`. That file lists the fingerprints registered in Google
 Cloud (debug, upload, Play App Signing), one per line; keep it in sync with the console. A
-missing SHA-1 is the classic "works in debug, fails in release".
+missing SHA-1 is the classic "works in debug, fails in release". The check also fails when
+`GoogleSignIn.instance.initialize` passes no `nonce:`, and reads the keystore password from the
+environment, never from the command line.
 
 ## 2. Maestro flows
 
