@@ -56,6 +56,10 @@ skill call. The globs start with `**/`, so they also match when the session runs
 the app. Limits: the rule loads only after a matching file is touched through Read, Edit or
 Write (not through Bash), and a separate git worktree needs its own session in that worktree.
 
+### CI templates
+
+[templates/ci/](templates/ci/) has `ci.yml` (format, analyze, test, codegen drift, `--enforce-lockfile`, the UI, layer, size, login and helper checks, `sync.sh --check`), `osv-scanner.yml` and `dependabot.yml`; [templates/analysis_options.yaml](templates/analysis_options.yaml) is the strict analyzer config (`unawaited_futures`, `avoid_print`, `cancel_subscriptions`, `close_sinks`). Actions are pinned by commit SHA, the gitleaks download is checksum-verified. Copy them once; Dependabot keeps the pins current.
+
 ## How this repo grows
 
 When a bug turns out to be a class rather than a one-off (it happened twice, or it would

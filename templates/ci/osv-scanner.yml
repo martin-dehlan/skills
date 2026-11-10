@@ -1,0 +1,53 @@
+name: OSV-Scanner
+
+# Dependency-vulnerability SAST. OSV-Scanner reads pubspec.lock (pub
+# ecosystem) and the GitHub Actions pins, and reports known vulnerabilities
+# from the OSV database. CodeQL is not used here — it has no Dart support.
+#
+#   - On PRs: scan only NEW vulnerabilities the branch introduces (fails the PR).
+#   - On a schedule + push to main: scan ALL known vulnerabilities.
+#
+# SARIF upload is off. The reusable workflows default `upload-sarif: true`,
+# which pushes results to Security > Code Scanning — a GitHub Advanced
+# Security feature that a *private* repo has to pay for. Without it the
+# upload step hard-fails ("Code scanning is not enabled for this
+# repository") and reds the check even when the scan itself found nothing,
+# which is exactly what it was doing.
+#
+# `fail-on-vuln` is independent of the upload, so the gate is unaffected:
+# a real vulnerability still fails the run, it just reports in the job log
+# instead of the Security tab. If this repo goes public — or buys GHAS —
+# flip both inputs back to true to get the dashboard back.
+
+on:
+  pull_request:
+    branches: [main]
+  merge_group:
+    branches: [main]
+  schedule:
+    - cron: '30 12 * * 1'
+  push:
+    branches: [main]
+
+# `security-events: write` stays even though nothing is uploaded: both
+# reusable workflows *declare* it themselves, and a called workflow may
+# not request more than the caller grants. Dropping it here doesn't
+# tighten anything — it just makes the workflow fail to load at all
+# (startup_failure, before any job runs).
+permissions:
+  actions: read
+  security-events: write
+  contents: read
+
+jobs:
+  scan-pr:
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@9a498708959aeaef5ef730655706c5a1df1edbc2 # v2.3.8
+    with:
+      upload-sarif: false
+
+  scan-scheduled:
+    if: github.event_name == 'schedule' || github.event_name == 'push'
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a498708959aeaef5ef730655706c5a1df1edbc2 # v2.3.8
+    with:
+      upload-sarif: false
