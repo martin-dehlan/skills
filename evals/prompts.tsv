@@ -1,31 +1,31 @@
-# skill	prompt	expect (regex, case-insensitive, must match)	forbid (regex, must not match; empty = none)
-flutter-feature-stack	Add a rename action to the items list. The save button calls Supabase directly and shows a spinner.	drift|local|outbox|offline	await.*supabase.*before
-flutter-feature-stack	Write the provider for the user's favourites list in a Riverpod 3 codegen app.	@riverpod|watch.*user|uid|currentUser	StateNotifier|ChangeNotifier
-flutter-feature-stack	I send created_at from the phone to Supabase with DateTime.now().toIso8601String(). Any problem?	toUtc|UTC	
-flutter-feature-stack	A widget needs the Supabase client to load the profile. Where do I get it?	controller|repository|provider	Supabase\.instance.*widget
-flutter-feature-stack	Split a 600 line items.provider.dart.	sub-feature|by feature	by type
-lean-flutter-ui	Make the empty state of the wines screen look nicer with a gradient card.	no gradient|without a gradient|flat|cs\.|colorScheme	LinearGradient\(
-lean-flutter-ui	Add 16px padding around the list and a 14px title.	token|responsive|context\.	EdgeInsets\.all\(16
-lean-flutter-ui	Design the loading and error state of the profile screen.	skeleton|retry	CircularProgressIndicator\(\)\s*$
-lean-flutter-ui	The tablet layout stretches the form across 900 dp.	max.*width|ConstrainedBox|content width	
-lean-flutter-ui	Add a copy button with only an icon.	tooltip|Semantics|label	
-supabase-app-backend	Write the migration for a notes table owned by the user.	grant|enable row level security|policy	create table[^;]*;\s*$
-supabase-app-backend	Add Google sign-in with google_sign_in 7 and Supabase.	nonce|serverClientId|SHA-1	
-supabase-app-backend	A guest taps Delete account. What has to happen?	revoke|storage|RevenueCat|reset|wipe	
-supabase-app-backend	Where do I put the Supabase secret key for a seed script?	\.env\.tools	bundled.*\.env\b.*SECRET
-supabase-app-backend	Upload to a private bucket fails with a 403 violating row-level security.	SELECT policy|select policy	
-app-release	Prepare release 1.4.0 for the App Store and Play.	check_secrets|check_login_config|build number|BUILD|changelog	
-app-release	Write the commit message for a fix to the login redirect.	fix\(	
-app-release	I accidentally committed a service key. What now?	rotate|revoke	just delete the file
-app-release	Google login works in debug but fails in the Play build.	SHA-1|App Signing	
-app-release	Can I merge my branch and delete it?	worktree|prune|stacked|base	
-posthog-analytics	Add an analytics event when the user taps Share.	snake_case|_shared|constants|ids only	
-posthog-analytics	Log the user's email in the signup event.	no email|ids only|not	
-posthog-analytics	Capture the login failure.	login_failed	
-posthog-analytics	Sign-out should clean the analytics identity.	reset|build_mode	
-posthog-analytics	Should I identify guests?	anonymous|do not identify|identify.*conversion	
-revenuecat-purchases	Gate the export feature for Pro users.	entitlement|server|RLS|webhook	productId ==|product id
-revenuecat-purchases	Prices do not load on the paywall.	offering|agreement|product	
-revenuecat-purchases	I put the test_ key in .env for the release build.	fatal|never ship|release	fine
-revenuecat-purchases	Where do I store the Pro expiry?	user_entitlements|separate table	profiles
-revenuecat-purchases	The user cancelled the purchase sheet.	cancelled|no error	show.*error
+# skill	prompt	expect (regex, case-insensitive, must match)	forbid (optional)
+flutter-feature-stack	Which script checks that presentation code does not import repositories, and which one stops files from growing?	check_layers.*check_file_sizes|check_file_sizes.*check_layers	
+flutter-feature-stack	What is the maximum length of a provider file before it must be split, and how do I name the files?	400.*sub-feature|sub-feature.*400	
+flutter-feature-stack	How do I name a new freezed entity file for wine tastings in our conventions?	\.entity\.dart|name\.type\.dart|tasting\.entity	
+flutter-feature-stack	A repository method saves a note. In which order do Drift, Supabase and the UI happen?	drift.*(first|then).*(outbox|queue|sync)|(outbox|queue).*drift	
+flutter-feature-stack	Which package do I use to read the app version at runtime and where is it initialised?	package_info_plus	
+lean-flutter-ui	How far may the system text scale grow in our apps before we clamp it?	1\.3	
+lean-flutter-ui	What is the minimum touch target and how do I get it on an IconButton?	48	
+lean-flutter-ui	Which script rejects gradients and hard-coded colours in added Dart lines?	check_ui_rules	
+lean-flutter-ui	On a 900 dp wide window, what max width should a form get?	560	
+lean-flutter-ui	Which file holds the responsive spacing tokens?	responsive\.dart	
+supabase-app-backend	A guest signs in with Google but the account already exists. Which error code do I handle?	identity_already_exists	
+supabase-app-backend	Which table stores Pro status server-side and who may write to it?	user_entitlements.*service_role|service_role.*user_entitlements	
+supabase-app-backend	An edge function is called by a webhook without a user JWT. Which setting changes?	verify_jwt	
+supabase-app-backend	Which script do I run to check that no secret is staged?	check_secrets	
+supabase-app-backend	How do I know in SQL that the current user is a guest?	is_anonymous	
+app-release	Where do I record store form answers such as data safety and age rating?	store/forms	
+app-release	Which script and flag must pass before a release to check login configuration?	check_login_config.*--strict	
+app-release	What goes into the changelog entry besides the changes?	security	
+app-release	Which build-number rule applies on every upload?	\+1|increment|bump	
+app-release	Which review marker does the pr-reviewer leave and where?	pr-reviewed	
+posthog-analytics	Name the three events around login in order.	login_started.*login_completed|login_started.*login_failed	
+posthog-analytics	What do we call the property that tells debug from store-test traffic?	build_mode	
+posthog-analytics	What is the naming pattern for event names?	object_action|snake_case	
+posthog-analytics	What must the sign-out flow call on the analytics side?	reset\(\)	
+posthog-analytics	Which event fires when a sync fails and what is its name?	sync_failed	
+revenuecat-purchases	Which event do I send when the user closes the purchase sheet without paying?	purchase_cancelled	
+revenuecat-purchases	Which event marks the paywall being shown?	paywall_viewed	
+revenuecat-purchases	After login, which RevenueCat call links purchases to the Supabase user?	logIn	
+revenuecat-purchases	Which property distinguishes trial from paid period in purchase events?	period_type	
+revenuecat-purchases	What should happen on a platform that has no RevenueCat key?	unavailable|nothing is locked|no paywall	

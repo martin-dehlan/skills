@@ -3,21 +3,24 @@
 #   evals/run.sh [--skill <name>] [--off]     (--off uses an empty config dir: the baseline without skills)
 # Needs: `claude` on PATH, logged in. Costs tokens: 30 prompts per pass. Output: one line per
 # prompt (PASS/FAIL) and a total, plus results in evals/results/<date>-<on|off>.tsv.
-# Env: EVAL_OFF_CONFIG_DIR (default: a temp dir) for --off; EVAL_MODEL (default: the CLI default).
+# Env: EVAL_OFF_CONFIG_DIR (default: ~/.claude-eval-off, log in there once with `CLAUDE_CONFIG_DIR=~/.claude-eval-off claude`) for --off; EVAL_MODEL (default: the CLI default).
 set -uo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 only=""; mode=on
 while [ $# -gt 0 ]; do case "$1" in --skill) only="$2"; shift 2 ;; --off) mode=off; shift ;; *) echo "unknown arg $1" >&2; exit 2 ;; esac; done
 command -v claude >/dev/null || { echo "claude not found" >&2; exit 2; }
 mkdir -p "$here/results"; out="$here/results/$(date +%F)-$mode.tsv"; : > "$out"
-if [ "$mode" = off ]; then export CLAUDE_CONFIG_DIR="${EVAL_OFF_CONFIG_DIR:-$(mktemp -d)}"; fi
+if [ "$mode" = off ]; then export CLAUDE_CONFIG_DIR="${EVAL_OFF_CONFIG_DIR:-$HOME/.claude-eval-off}"; fi
 model=(); [ -n "${EVAL_MODEL:-}" ] && model=(--model "$EVAL_MODEL")
 pass=0; total=0
 while IFS=$'\t' read -r skill prompt expect forbid; do
   case "$skill" in ''|\#*) continue ;; esac
   [ -n "$only" ] && [ "$skill" != "$only" ] && continue
-  answer=$(cd "$(mktemp -d)" && claude -p "$prompt" ${model[@]+"${model[@]}"} 2>/dev/null) || answer=""
+  answer=$(cd "$(mktemp -d)" && claude -p "$prompt" --disallowedTools "Read Grep Glob Bash Edit Write WebFetch WebSearch Agent" ${model[@]+"${model[@]}"} 2>"$here/results/.err") || answer=""
+  if [ -z "$answer" ]; then echo "empty answer (not logged in? for --off run: CLAUDE_CONFIG_DIR=${CLAUDE_CONFIG_DIR:-default} claude, log in once)" >&2; cat "$here/results/.err" >&2; exit 3; fi
+  
   ok=1
+  printf '%s\n' "$answer" > "$here/results/$(date +%F)-$mode-$((total+1)).txt"
   printf '%s' "$answer" | grep -Eiq "$expect" || ok=0
   if [ -n "$forbid" ] && printf '%s' "$answer" | grep -Eiq "$forbid"; then ok=0; fi
   total=$((total+1)); [ $ok -eq 1 ] && pass=$((pass+1))
