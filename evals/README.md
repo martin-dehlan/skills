@@ -17,12 +17,18 @@ copy the two totals into the table below with the date.
 
 | Skill | On | Off | Date |
 |---|---|---|---|
-| flutter-feature-stack | not run | not run | |
-| lean-flutter-ui | not run | not run | |
-| supabase-app-backend | not run | not run | |
-| app-release | not run | not run | |
-| posthog-analytics | not run | not run | |
-| revenuecat-purchases | not run | not run | |
+| flutter-feature-stack | 5/5 | 4/5 | 2026-11-11 |
+| lean-flutter-ui | 5/5 | 4/5 | 2026-11-11 |
+| supabase-app-backend | 5/5 | 5/5 | 2026-11-11 |
+| app-release | 5/5 | 5/5 | 2026-11-11 |
+| posthog-analytics | 5/5 | 5/5 | 2026-11-11 |
+| revenuecat-purchases | 5/5 | 5/5 | 2026-11-11 |
+
+The first run scored 24/30; every miss was a forbid-regex firing on an answer that negated it
+("never a product id"), so those regexes were removed. Answers are saved next to the results
+for diagnosis. Off scored 28/30 against 30/30 on: the prompts are too easy. A generic answer matches the
+regexes without the skill, so these evals show that skills do not hurt, not that they help.
+Next step: prompts that need a repo-specific fact (a helper name, a threshold, a file path).
 
 ## Monthly check (first Monday)
 

@@ -18,9 +18,16 @@ failing step. The upload itself needs the owner's go-ahead.
 3. **Build** from the merged commit, from a clean tree (`git status` empty):
 
    ```bash
-   flutter build appbundle --release        # build/app/outputs/bundle/release/app-release.aab
-   flutter build ipa --release              # build/ios/ipa/*.ipa
+   flutter build appbundle --release --obfuscate --split-debug-info=build/symbols/<version>
+   flutter build ipa --release --obfuscate --split-debug-info=build/symbols/<version>
    ```
+
+   Outputs: `build/app/outputs/bundle/release/app-release.aab`, `build/ios/ipa/*.ipa`.
+   `--obfuscate` needs `--split-debug-info`. Keep `build/symbols/<version>` (git-ignored) until
+   that version is gone from the stores: without it a Dart stack trace from that build cannot
+   be read, so a crash report is useless. Symbolize with
+   `flutter symbolize -i <trace.txt> -d build/symbols/<version>`. Not verified end to end in
+   Martin's apps yet: do it once on a TestFlight build before relying on it.
 
    Artifacts stay under the app's `build/` directory. Never copy them into the repo or leave
    one per commit on disk. Check the bundled `.env` has publishable keys only and no `test_`
