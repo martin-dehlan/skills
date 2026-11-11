@@ -16,7 +16,7 @@ pass=0; total=0
 while IFS=$'\t' read -r skill prompt expect forbid; do
   case "$skill" in ''|\#*) continue ;; esac
   [ -n "$only" ] && [ "$skill" != "$only" ] && continue
-  answer=$(cd "$(mktemp -d)" && claude -p "$prompt" ${model[@]+"${model[@]}"} 2>"$here/results/.err") || answer=""
+  answer=$(cd "$(mktemp -d)" && claude -p "$prompt" --disallowedTools "Read Grep Glob Bash Edit Write WebFetch WebSearch Agent" ${model[@]+"${model[@]}"} 2>"$here/results/.err") || answer=""
   if [ -z "$answer" ]; then echo "empty answer (not logged in? for --off run: CLAUDE_CONFIG_DIR=${CLAUDE_CONFIG_DIR:-default} claude, log in once)" >&2; cat "$here/results/.err" >&2; exit 3; fi
   
   ok=1
