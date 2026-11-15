@@ -19,6 +19,7 @@ Short form of the `lean-flutter-ui` skill. Load the skill for motion, states, te
 - Never: gradients, `BackdropFilter`, blur above 10, elevation above 1, more than two nested cards, emoji as icons, decorative icons.
 - One title, one supporting line, details. At most one primary and one secondary action.
 - Every async view has data, loading (skeleton) and error (with retry). An empty state has exactly one CTA.
+- `cs.error` only for validation and destructive actions. A state the user can fix is one accent line that opens the fix; a status line never changes the card's height.
 - Animations respect the motion setting and `MediaQuery.disableAnimationsOf(context)`; entrances run once.
 - After an `await` check `mounted`; reset loading flags in `finally`.
 - Check before you say done: `bash scripts/check_ui_rules.sh`.

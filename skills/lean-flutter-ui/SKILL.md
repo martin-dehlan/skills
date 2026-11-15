@@ -1,6 +1,6 @@
 ---
 name: lean-flutter-ui
-description: Use before building or changing any screen, widget, animation, loading state, theme or share card in a Flutter app, including planning the UI. Lean Flutter UI conventions - theme colors, responsive spacing tokens, anti-AI-slop, motion values, skeleton loading, offline states, text and i18n layout, off-screen renders.
+description: Use before building or changing any screen, widget, animation, loading state, theme or share card in a Flutter app, including planning the UI. Lean Flutter UI conventions - theme colors, responsive spacing tokens, anti-AI-slop, motion values, skeleton loading, offline states, calm error and permission states, text and i18n layout, fixed-set rows, sheets, off-screen renders.
 ---
 
 # Lean Flutter UI
@@ -9,8 +9,14 @@ Principle: **less, but finished.** Fewer elements, each calm, aligned and animat
 intent. When unsure, remove instead of adding. App-specific names (tokens, widgets, motion
 setting) are listed under **Helpers** in the repo's CLAUDE.md.
 
-The rules are strict and CI enforces them on **added lines** (see Enforcement). Old code that
-breaks them is fixed only when you touch that widget anyway.
+| Building | Read first |
+|---|---|
+| a share card, export or other off-screen render | [references/offscreen-renders.md](references/offscreen-renders.md) |
+| the check in CI, or an exception to it | [references/enforcement.md](references/enforcement.md) |
+| the first widget in a new app | [references/widget-shape.md](references/widget-shape.md) |
+
+CI checks **added lines** only (see Pre-flight). Old code that breaks a rule is fixed when you
+touch that widget anyway.
 
 ## Always
 
@@ -27,6 +33,19 @@ breaks them is fixed only when you touch that widget anyway.
   action per screen.
 - Every async view has three finished states: data, loading (skeleton), error (with retry).
   Empty states have exactly one CTA.
+
+## Calm states
+
+A state the user can resolve is said in the voice of the screen, never as an alarm.
+
+- **A fixable state is an offer:** one line in the accent (`cs.primary`) whose tap opens the fix
+  (retry, the system settings page, sign-in); re-check when the app resumes. `cs.error` is for
+  form validation and destructive actions only.
+- **A recoverable failure** uses the style of the text around it (`cs.onSurfaceVariant`, same
+  size, at most two lines, from l10n). The next natural action is the retry and clears the line.
+  A cancelled or superseded operation is not a failure and is not shown.
+- **Status never moves the layout:** a status line in a card is `maxLines: 1` with ellipsis, so
+  the card keeps its height whatever it says.
 
 ## Never (AI slop)
 
@@ -70,27 +89,30 @@ scrim (`cs.scrim` with opacity) over photos or video is fine; a gradient scrim i
 - Submit buttons show inline progress, are disabled while running, and the handler is
   single-flight so a double tap cannot create two rows.
 
-## Text and languages
+## Text, languages and fit
 
 - Design for the longest locale (usually German) and the app's tested text-scale range (below).
   Every text inside a fixed-size box gets `maxLines` + `overflow: TextOverflow.ellipsis`.
 - **Text-scale policy:** clamp once, globally, in `MaterialApp.builder` to
   `TextScaler.linear(...clamp(1.0, 1.3))` of the system scale, and test screens at 1.0 and 1.3.
   Do not clamp per screen; a screen that breaks at 1.3 is fixed by layout, not by a local clamp.
-- **Fonts are bundled** as assets (`pubspec.yaml` `fonts:`). Never fetch fonts at runtime
-  (`google_fonts` downloading on first use failed offline and was a top error source).
+- **Fonts are bundled** as assets (`pubspec.yaml` `fonts:`), never fetched at runtime: a
+  download on first use fails offline.
 - Never use soft hyphens (U+00AD): Flutter draws them as a visible space. Long titles in tight
   grids use the app's hyphenation widget, or a shorter or explicitly hyphenated translation.
 - All copy comes from l10n (`AppLocalizations`), including snackbars and error messages. Push
   notifications are rendered in the recipient's language on the server.
+- **A fixed set** (weekdays, a 1 to 5 scale, segments) is one `Row` of equal `Expanded` tiles,
+  at least 48 dp high, that fits at 320 dp wide. `Wrap` is for open sets (tags) only: a fixed
+  set that wraps leaves one item alone on a second row.
+- **A list in a sheet** (pickers, long choices) stops at the default height (9/16 of the screen)
+  and scrolls inside. With `isScrollControlled: true`, give it an explicit max height.
 
 ## Large screens, insets, accessibility
 
-- **Token scale is clamped.** Tokens derived from the screen (font as a share of width,
-  spacing as a share of height) use a clamped reference width, e.g. `min(width, 430) / 390`,
-  never the raw width. From API 36 Android 16 ignores orientation and resize locks at 600 dp
-  and wider (foldables, tablets, desktop windows), so a screen can be 800 dp wide: body text
-  must not become 24 to 41 px there.
+- **Token scale is clamped.** Tokens derived from the screen use a clamped reference width,
+  e.g. `min(width, 430) / 390`, never the raw width: from API 36 Android ignores orientation
+  locks at 600 dp and wider, so a phone layout can get 800 dp and 24 to 41 px body text.
 - **Max content width** on wide screens: wrap page bodies in a `Center` + `ConstrainedBox`
   (`maxWidth` as a token, about 560 for forms and lists), or switch to two columns; never
   stretch a phone layout.
@@ -102,76 +124,13 @@ scrim (`cs.scrim` with opacity) over photos or video is fine; a gradient scrim i
   shrink them); text and icon contrast at least 4.5:1 against its background in both themes;
   state is never conveyed by color alone; decorative images are `excludeFromSemantics`.
 
-## Off-screen renders (share cards, exports)
-
-- They render on a fixed canvas (e.g. 1080 × 1920), so fixed pixel sizes and a fixed palette
-  are correct there. List the folder in `.ui-rules-ignore`.
-- Wrap the detached tree in `Localizations` (plus Theme and MediaQuery). Otherwise every l10n
-  lookup throws off-screen, and release builds export a plain grey image.
-- Resolve signed URLs and `precacheImage` before the capture; if a signature fails, render the
-  placeholder instead of aborting the share.
-
-## Widget shape
-
-```dart
-class ItemCard extends StatelessWidget {
-  const ItemCard({super.key, required this.item});
-  final ItemEntity item;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return Container(
-      padding: EdgeInsets.all(context.m),             // token names: see responsive.dart
-      decoration: BoxDecoration(
-        color: cs.surfaceContainer,
-        borderRadius: BorderRadius.circular(context.cardRadius),  // a token, never a number
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(item.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: context.headingFont)),
-          SizedBox(height: context.xs),
-          Text(item.subtitle,
-              style: TextStyle(fontSize: context.captionFont, color: cs.onSurfaceVariant)),
-        ],
-      ),
-    );
-  }
-}
-```
-
-## Enforcement
-
-[`scripts/check_ui_rules.sh`](scripts/check_ui_rules.sh) checks only lines added since the
-base branch, so old code never blocks a PR. It covers fixed spacing, padding, font sizes and
-radii, raw colors, gradients, `BackdropFilter`, blur above 10, elevation above 1, emoji,
-`MediaQuery.of(context).size`, `_build` methods and `print`. Nesting depth, hierarchy and
-decorative icons stay a review matter. A base ref that does not exist exits 2, never "OK";
-`--file <path>` checks every line of one file. Every app keeps a copy at `scripts/check_ui_rules.sh`
-and runs it in CI on pull requests (checkout with `fetch-depth: 0`):
-
-```yaml
-      - name: ui rules (added lines only)
-        if: github.event_name == 'pull_request'
-        run: bash scripts/check_ui_rules.sh origin/${{ github.base_ref }}
-```
-
-Exceptions:
-- `.ui-rules-ignore` at the repo root: one git pathspec per line, for code that legitimately
-  uses fixed pixels (e.g. `lib/features/<feature>/presentation/cards/*` for share cards).
-- `// ui-rules-ok: <reason>` on the line itself, for a single justified case (the reason is
-  required). Prefer a theme color or a new token over the marker.
-
 ## Pre-flight
 
-- [ ] `bash scripts/check_ui_rules.sh` passes
+- [ ] `bash scripts/check_ui_rules.sh` passes (fixed sizes and radii, raw colors, gradients, blur,
+  elevation, emoji, `MediaQuery.of(context).size`, `_build`, `print`)
 - [ ] No `_build*` methods; widget file ≤ 300 lines
-- [ ] Data, loading, offline and error states all designed; skeletons end
+- [ ] Data, loading, offline and error states designed and calm; skeletons end
 - [ ] Animations use the table values and respect the motion setting and reduce-motion
 - [ ] Copy from l10n; checked in German and at large system text; no soft hyphens
-- [ ] Checked on a small phone (≤ 700 pt high) **and** in an 800 dp wide / resized window
+- [ ] Checked on a small phone (≤ 700 pt high, 320 dp wide) **and** in an 800 dp wide window
 - [ ] Checked at text scale 1.0 and 1.3; icon-only controls labelled, targets ≥ 48 dp

@@ -1,6 +1,6 @@
 # Evals
 
-Does a skill trigger, and does it change the answer? `prompts.tsv` has five realistic prompts per
+Does a skill trigger, and does it change the answer? `prompts.tsv` has five or more realistic prompts per
 skill with a regex the answer must match and one it must not.
 
 ```bash
