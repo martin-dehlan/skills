@@ -53,6 +53,17 @@ Work on skills in `~/skills` or in further worktrees, never in `~/skills-live`. 
 before it is merged, `./install.sh --dev` links the working tree instead; a plain `./install.sh`
 switches back.
 
+**Cloud sessions** have no `~/.claude` from this machine. Put this line in the environment's setup
+script; it links the clone directly, without the live worktree:
+
+```bash
+git clone --depth 1 https://github.com/martin-dehlan/skills ~/skills && ~/skills/install.sh --clone
+```
+
+The app template's `session-start.sh` hook says so in the first message when the skills or the
+reviewer are missing, and when the checkout the session runs in has older hooks than `origin/main`
+(Claude Code reads hooks from that checkout, not from the worktree you edit in).
+
 Restart Claude Code, then `/skills` and `/agents` list them. No skill is scoped with `paths:`: a path match
 only lists a skill after the first file is touched, which is after the change was designed, and it
 never matches from a parent directory or a sibling worktree. `/skill-doctor` shows how often each
