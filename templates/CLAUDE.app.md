@@ -18,7 +18,8 @@ This file is always in context, a skill is not. Load the matching skill (Skill t
 | touch the paywall, Pro gating or the webhook | `revenuecat-purchases` |
 | commit, open a PR, bump a version, upload to a store | `app-release` |
 
-Before a PR, run the `pr-reviewer` agent.
+Before a PR, run the `pr-reviewer` agent. When the owner corrects how something looks, reads or
+behaves, finish the fix, then file the reviewer's skill candidate (`/ship` step 7).
 
 ## Invariants
 

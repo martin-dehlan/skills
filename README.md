@@ -115,7 +115,9 @@ are rules, not intentions: CI enforces the budgets, and the monthly check remove
 **1. A correction becomes a candidate.** When the owner corrects something Claude built (a bug, or
 "this looks, reads or behaves wrong" about shipped UI), the `pr-reviewer` ends its review with a
 `Skill candidate:` line and `/ship` files it as a `skill-candidate` issue here, or adds "+1" to an
-open one for the same class. This repo is public: a candidate names the generic class, never the
+open one for the same class. App CI (`check_skill_candidate.sh`, seeded as
+`.github/workflows/skill-candidate.yml`) fails a `fix`/`design` PR that changes UI without that
+line in its body. This repo is public: a candidate names the generic class, never the
 app, a private issue number or an unreleased screen.
 
 **2. The candidate takes the cheapest place that prevents the repeat.** Top to bottom, the first

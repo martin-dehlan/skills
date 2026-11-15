@@ -23,8 +23,13 @@ Never merge; merging is the owner's decision.
    is the squash commit, a body with summary, `Closes #n` for every issue, and a test plan that
    says what ran and what was only checked in a golden shot or on a device.
 6. **Watch checks:** `gh pr checks --watch`. A red check: read the log, fix, push, watch again.
-7. **Report** in the user's language: PR link, what ran, what did not, any `Skill candidate:`
-   from the reviewer (and whether the rule was added).
+7. **Skill candidate.** A correction branch always gets the reviewer's `Skill candidate:` line.
+   Not `none`: search `gh issue list --repo martin-dehlan/skills --label skill-candidate --search
+   "<class>"`; comment "+1, another occurrence" on a match, else `gh issue create --repo
+   martin-dehlan/skills --label skill-candidate` with the template's fields. Generic text only
+   (public repo). Put `Skill candidate: <issue url>` or the `none` line into the PR body; app CI
+   fails a UI fix without it (`check_skill_candidate.sh`).
+8. **Report** in the user's language: PR link, what ran, what did not, the candidate issue.
 
 Stop and ask only for: a failing step you cannot fix, a missing secret, an issue number you
 cannot infer, or a change that touches something the user did not ask for.
