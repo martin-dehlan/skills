@@ -1,0 +1,25 @@
+name: skill candidate
+
+# A PR that corrects shipped UI says what the shared skills learn from it.
+# Separate from ci.yml so that editing the PR body re-runs only this check.
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+
+jobs:
+  skill-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+      - name: corrections carry a Skill candidate line
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+          BODY: ${{ github.event.pull_request.body }}
+        run: bash scripts/check_skill_candidate.sh origin/${{ github.base_ref }}
