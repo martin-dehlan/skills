@@ -13,7 +13,7 @@ root="$(git rev-parse --show-toplevel)"
 baseline="$root/.file-size-baseline"
 
 limit_of() { case "$1" in *.provider.dart) echo 400 ;; *) echo 300 ;; esac; }
-skip() { case "$1" in *.g.dart|*.freezed.dart|*.gr.dart|*/generated/*|*/l10n/*) return 0 ;; esac; return 1; }
+skip() { case "$1" in *.g.dart|*.freezed.dart|*.gr.dart|*.steps.dart|*/generated/*|*/l10n/*) return 0 ;; esac; return 1; }
 over() { # prints "<lines> <path>" for every file over its limit
   git -C "$root" ls-files 'lib/*.dart' | while read -r f; do
     skip "$f" && continue
