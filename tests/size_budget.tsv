@@ -1,0 +1,5 @@
+# Files over their budget when budgets were introduced. Ceiling = size at that time.
+# They may shrink, never grow. Delete a row once the file is under the general budget.
+# path	max_lines	max_bytes
+skills/flutter-feature-stack/SKILL.md	263	14481
+skills/app-release/references/device-testing.md	172	8182

@@ -120,9 +120,51 @@ Skills in this repo only work well when the listing is short enough to read them
 
 ## How this repo grows
 
-When a bug turns out to be a class rather than a one-off (it happened twice, or it would
-happen in the next app too), add one generic rule with a short reason to the matching skill.
-The `pr-reviewer` flags these as `Skill candidate:` on every fix branch. Add the rule
-in the same PR as the fix or right after it. App names, issue numbers and concrete class
-names stay out of the skills; they belong in the app's `CLAUDE.md`. Keep each `SKILL.md`
-short: details go to `references/`, which Claude reads only when the task needs them.
+The skills learn from corrections in the apps and stay small enough to be followed. Both halves
+are rules, not intentions: CI enforces the budgets, and the monthly check removes as well as adds.
+
+**1. A correction becomes a candidate.** When the owner corrects something Claude built (a bug, or
+"this looks, reads or behaves wrong" about shipped UI), the `pr-reviewer` ends its review with a
+`Skill candidate:` line and `/ship` files it as a `skill-candidate` issue here, or adds "+1" to an
+open one for the same class. This repo is public: a candidate names the generic class, never the
+app, a private issue number or an unreleased screen.
+
+**2. The candidate takes the cheapest place that prevents the repeat.** Top to bottom, the first
+rung that fits wins:
+
+| # | If | Then | Costs context |
+|---|---|---|---|
+| 1 | a grep on added lines can catch it | a check script + fixture test; the skill names the pattern at most | never |
+| 2 | it is true for one app only | that app's `CLAUDE.md`; close as `app-only` | not here |
+| 3 | an existing rule almost covers it | rewrite that line to cover it; no new line | no more than now |
+| 4 | it is needed on every UI edit, and breaking it ships a visible defect | one bullet in `templates/claude/rules/*.md` | on every matching edit |
+| 5 | it is needed whenever this kind of work is planned or built | one line in an existing section of `SKILL.md` | per task |
+| 6 | it is needed for one kind of work only (sheets, share cards, permissions) | `references/<topic>.md` behind a "read when" pointer | only when relevant |
+| 7 | it happened once and the next app may not have it | label `parked`; a second occurrence promotes it | never |
+
+**3. How a rule is written.** One sentence and its reason; the reason is what lets the model apply
+it to a case nobody listed. The principle first, at most one example. Several corrections with one
+cause become one rule. No app names, issue numbers or dates: why a rule exists is answered by the
+closed candidate issue its PR closes. A rule a script took over leaves the prose.
+
+**4. Budgets** (`tests/lint_skills.py`, CI):
+
+| File | Budget |
+|---|---|
+| `SKILL.md` | 200 lines and 10 KB |
+| `SKILL.md` of a manual workflow skill (`disable-model-invocation`) | 40 lines |
+| `references/*.md` | 150 lines |
+| `templates/claude/rules/*.md` | 15 bullets |
+
+Files over budget today are listed in `tests/size_budget.tsv` with their current size as the
+ceiling: they may shrink, never grow. A file at its budget takes a new line only if another leaves
+in the same PR (rung 3 or 6). The lint prints a size table on every run.
+
+**5. Rules leave.** The monthly check ([evals/README.md](evals/README.md)) prunes: prose a script
+took over, rules whose eval prompt passes without the skills, rules nobody cited for six months,
+parked candidates older than three months. Every removal is one `CHANGELOG.md` line with its
+reason. If a class comes back after its rule was pruned, the rule returns on a lower rung (a
+script or a path rule), not as more prose.
+
+Each candidate PR states its rung, its eval result and the lines added and removed
+([PR template](.github/pull_request_template.md)).
