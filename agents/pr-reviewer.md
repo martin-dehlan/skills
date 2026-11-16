@@ -59,10 +59,17 @@ Findings first, most severe first. Each finding:
 
 Then one line per check you ran with its result.
 
-Last, for a branch that fixes a bug: one line `Skill candidate:`. Either `none (one-off)`, or
-the bug class it belongs to, the generic rule that would have prevented it (no app names, no
-issue numbers) and the skill it belongs in. A class is a bug that already happened twice or
-would happen in the next app too.
+Last, for a **correction** (a branch titled `fix` or `design`, or one that changes UI the owner
+said looks, reads or behaves wrong): one line, exactly this shape:
+
+```
+Skill candidate: <class in a few words> | <one-sentence generic rule and its reason> | <skill> | <rung>
+Skill candidate: none (one-off: <reason>)
+```
+
+The rung is one of the seven in the skills repo README ("How this repo grows"): `check`,
+`app-only`, `sharpen`, `path-rule`, `skill`, `reference`, `park`. Prefer the cheapest that
+prevents the repeat. No app names, issue numbers or unreleased screens: the skills repo is public.
 
 No praise, no summary of the diff. If there is nothing to report, say so in one line and list
 the checks.
