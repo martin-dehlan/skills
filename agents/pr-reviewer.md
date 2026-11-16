@@ -73,7 +73,8 @@ When the review is finished and no `[blocker]` is open, record it so the PR hook
 `gh pr create` through for this exact commit:
 
 ```bash
-git rev-parse HEAD > "$(git rev-parse --git-path pr-reviewed)"
+d="$(git rev-parse --path-format=absolute --git-common-dir)/pr-reviews"; mkdir -p "$d"; touch "$d/$(git rev-parse HEAD)"
 ```
 
-A new commit invalidates the marker. Do not write it when a blocker is open.
+Run it in the checkout you reviewed (the worktree). The marker sits in the common git dir, so
+the gate finds it from the main checkout too. A new commit needs a new review. Do not write it when a blocker is open.
