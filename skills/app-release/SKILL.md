@@ -47,7 +47,9 @@ hold when this skill is not loaded.
 **Worktrees and branches:** one branch per concept, one worktree per branch you work on in
 parallel (`git worktree add ../<repo>-<n> -b <branch> origin/main`). After the PR is merged:
 `git worktree remove ../<repo>-<n>`, `git branch -d <branch>`, `git fetch --prune`. Do not
-leave worktrees behind: each holds a full checkout and its build artifacts. Never
+leave worktrees behind: each holds a full checkout and its build artifacts. Start sessions in
+the main checkout and keep it on a current `main` (`git pull --ff-only` after every merge):
+Claude Code reads hooks from there, so a stale main checkout silently runs old or no hooks. Never
 `--delete-branch` on a PR that is the base of another open PR; GitHub closes the dependent.
 
 ## Secrets never reach git

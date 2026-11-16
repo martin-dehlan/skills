@@ -4,6 +4,8 @@
 #   ./install.sh          install or update: the live copy follows origin/main
 #   ./install.sh --dev    link this working tree instead (to try a branch; undo
 #                         with a plain ./install.sh)
+#   ./install.sh --clone  link this clone as it is, no live worktree (a cloud container's
+#                         setup script: git clone --depth 1 ... ~/skills && ~/skills/install.sh --clone)
 #
 # The skills are served from a separate worktree ("live", default
 # ../skills-live, detached at origin/main), not from this clone. Otherwise every
@@ -23,6 +25,7 @@ mode="${1:-}"
 
 case "$mode" in
   --dev) source_dir="$repo"; echo "dev mode: serving the working tree at $repo ($(git -C "$repo" branch --show-current))" ;;
+  --clone) source_dir="$repo"; echo "clone mode: serving $repo at $(git -C "$repo" log -1 --format='%h %s')" ;;
   "")
     git -C "$repo" fetch -q origin main
     if [ ! -e "$live/.git" ]; then
@@ -37,7 +40,7 @@ case "$mode" in
     source_dir="$live"
     echo "live: $live at $(git -C "$live" log -1 --format='%h %s')"
     ;;
-  *) echo "usage: $0 [--dev]" >&2; exit 2 ;;
+  *) echo "usage: $0 [--dev|--clone]" >&2; exit 2 ;;
 esac
 
 mkdir -p "$claude_dir/skills" "$claude_dir/agents"
