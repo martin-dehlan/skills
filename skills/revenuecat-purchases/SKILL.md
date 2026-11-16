@@ -103,6 +103,10 @@ Price per period, trial terms and what happens after, Restore purchases, Terms o
 Privacy Policy links (App Review 3.1.2). "Manage subscription" opens
 `customerInfo.managementURL`. No Google Play wording on iOS. See app-release.
 
+**Where Pro is offered:** where it unlocks something (a locked item, a gated action), opening the
+paywall from there. No buy button on identity surfaces (account card, profile header): it competes
+with the one action that surface exists for. A subscriber's plan label there is fine.
+
 ## Server-verified Pro
 
 Client-side gating only hides UI. Anything that costs money (API quotas, scans) or content
