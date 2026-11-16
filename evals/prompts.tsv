@@ -29,8 +29,8 @@ revenuecat-purchases	Prices do not load on the paywall.	offering|agreement|produ
 revenuecat-purchases	I put the test_ key in .env for the release build.	fatal|never ship|release	fine
 revenuecat-purchases	Where do I store the Pro expiry?	user_entitlements|separate table	profiles
 revenuecat-purchases	The user cancelled the purchase sheet.	cancelled|no error	show.*error
-lean-flutter-ui	Show a message under the player when a track fails to load.	onSurfaceVariant|retry|calm|muted	cs\.error|colorScheme\.error
-lean-flutter-ui	The OS refused the exact-alarm permission. Show that in the alarm card.	settings|cs\.primary|accent|tap	cs\.error|colorScheme\.error
+lean-flutter-ui	Show a message under the player when a track fails to load.	onSurfaceVariant|retry|calm|muted	color: *[A-Za-z_.()]*\.error([^A-Za-z]|$)
+lean-flutter-ui	The OS refused the exact-alarm permission. Show that in the alarm card.	settings|cs\.primary|accent|tap	color: *[A-Za-z_.()]*\.error([^A-Za-z]|$)
 lean-flutter-ui	Add a weekday picker to the reminder card.	Row|Expanded	Wrap\(
-lean-flutter-ui	Add a language picker sheet with 14 languages.	9/16|default height|scroll	isScrollControlled: true(?![\s\S]*max)
+lean-flutter-ui	Add a language picker sheet with 14 languages.	9/16|default height|scroll	isScrollControlled: *true
 revenuecat-purchases	Add a Get Pro button to the account card in the menu.	unlock|locked|where.*Pro|not.*account card	
