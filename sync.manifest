@@ -18,6 +18,7 @@ managed	skills/flutter-feature-stack/scripts/check_file_sizes.sh	scripts/check_f
 managed	templates/claude/hooks/guard-files.sh	.claude/hooks/guard-files.sh
 managed	templates/claude/hooks/check-edited-dart.sh	.claude/hooks/check-edited-dart.sh
 managed	templates/claude/hooks/gate-pr-create.sh	.claude/hooks/gate-pr-create.sh
+managed	templates/claude/hooks/session-start.sh	.claude/hooks/session-start.sh
 seed	templates/claude/rules/dart-ui.md	.claude/rules/dart-ui.md
 seed	templates/claude/rules/migrations.md	.claude/rules/migrations.md
 seed	templates/claude/rules/generated.md	.claude/rules/generated.md
