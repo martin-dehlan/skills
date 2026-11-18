@@ -33,4 +33,8 @@ bash "$S" --update >/dev/null
 ok "baseline accepts it"                      bash "$S"
 echo "// more" >> lib/features/a/presentation/big.widget.dart
 no "growing a baselined file fails"           bash "$S"
+git checkout -q -- lib
+mkdir -p lib/common/database; seq 1 400 | sed 's/.*/\/\/ x/' > lib/common/database/database.steps.dart
+git add -A; git commit -qm steps
+ok "drift .steps.dart is skipped"             bash "$S"
 exit $fail
