@@ -121,6 +121,19 @@ Guests are anonymous Supabase sessions converted with `linkIdentityWithIdToken`.
 - After the user id changes, everything user-scoped must rebuild: providers watch the id,
   Drift reads filter by it (see the flutter-feature-stack skill).
 
+## Auth state stream
+
+- Every `onAuthStateChange` subscription has an `onError`. gotrue pushes a failed background
+  refresh into the stream; without `onError` it is an uncaught error, and offline that was
+  one fake crash report per listener per refresh tick. Drop `AuthRetryableFetchException`.
+- **The stream replays earlier events and errors to every new subscriber.** An effect in
+  `onError` (a snackbar, an analytics event) fires once per listener and again on every
+  resubscribe. Handle each error once: dedupe by error identity (the replay is the same
+  object) or let exactly one subscriber own it.
+- An expired or used email link arrives as an `AuthException` on the stream (`otp_expired`
+  in `statusCode`, or `flow_state_expired` / `flow_state_not_found` in `code`). The user fixes
+  it with a new mail: show a calm notice and count it, do not report it as an error.
+
 ## Resend
 
 - Send from a subdomain only: `news@mail.<domain>` (newsletter), `hello@mail.<domain>`

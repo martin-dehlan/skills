@@ -5,6 +5,7 @@ newest first, grouped by month. Add the line in the same PR.
 
 ## 2026-11
 
+- `supabase-app-backend`: new "Auth state stream" (every listener has `onError`; the stream replays errors to each new subscriber, so effects in `onError` are deduped; an expired email link is a notice, not an error). From sippd #580 / #582.
 - `check_file_sizes.sh` skips Drift's generated `*.steps.dart` (schema steps grow with every migration). Apps: run `sync.sh`.
 - Hooks: the PR gate checks the commit that becomes the PR (`--head`, or the worktree named by `cd`), markers per commit in the common git dir (`pr-reviews/<sha>`); new `session-start.sh` announces stale hooks and missing skills; `install.sh --clone` for cloud sessions. Apps: run `sync.sh`, then add the `SessionStart` entry from `templates/claude/settings.json` to `.claude/settings.json` (seed file, not synced).
 - `lean-flutter-ui`: off-screen renders, CI wiring and the widget sample move to `references/` behind a "read when" table (177 → 136 lines); new "Calm states" (a fixable state is an accent line that opens the fix, a recoverable failure in the surrounding style, status never changes layout), fixed sets as one row of equal tiles, lists in sheets stop at the default height. `rules/dart-ui.md`: one bullet on `cs.error`. `revenuecat-purchases`: where Pro is offered. Five eval prompts. Apps: copy the new `dart-ui.md` bullet (seed file).
