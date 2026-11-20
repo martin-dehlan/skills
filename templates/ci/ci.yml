@@ -1,10 +1,21 @@
 name: ci
 
+# Runs on PRs and release tags only, not on every push to main: a private
+# repo on the free plan has 2,000 Actions minutes a month. When they are used
+# up, run scripts/ci_local.sh (app-release skill, "When Actions are blocked").
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
+    # Docs-only PRs skip the build. CLAUDE.md stays in: check_claude_helpers reads it.
+    paths:
+      - '**'
+      - '!docs/**'
+      - '!**/*.md'
+      - 'CLAUDE.md'
+  # Releases: a version tag (vX.Y.Z) runs the set once more.
+  push:
+    tags: ['v*']
+  workflow_dispatch:
 
 permissions:
   contents: read

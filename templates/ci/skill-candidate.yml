@@ -10,6 +10,11 @@ on:
 permissions:
   contents: read
 
+# Body edits come in bursts; only the last one matters.
+concurrency:
+  group: skill-candidate-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   skill-candidate:
     runs-on: ubuntu-latest
