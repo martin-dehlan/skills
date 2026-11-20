@@ -109,7 +109,7 @@ rows the app does not have (and list them under "Not adopted yet").
 ```bash
 bash scripts/install-git-hooks.sh          # once per clone: gitleaks pre-commit hook
 dart run build_runner build
-dart format . && flutter analyze && flutter test
+dart format . && flutter analyze && bash scripts/run_tests.sh
 bash scripts/check_ui_rules.sh             # UI tokens, blur, elevation, fixed pixels
 python3 scripts/check_claude_helpers.py    # Helpers table still matches the code
 bash scripts/check_secrets.sh              # secret hygiene (hook, CI, .gitignore, history)
