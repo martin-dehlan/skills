@@ -137,7 +137,7 @@ the issue or PR number.
 4. Store review checklist below. Dated requirements (target API, toolchain, deadlines) are in
    [references/platform-facts.md](references/platform-facts.md); re-check it when its date is
    older than 90 days.
-5. Screenshots updated if the UI in them changed ([references/store-screenshots.md](references/store-screenshots.md)).
+5. Screenshots updated if the UI in them changed ([references/store-screenshots.md](references/store-screenshots.md)); a promo or social reel from them: [references/store-reel.md](references/store-reel.md).
 
 ## App Store review: rejections that already happened
 
