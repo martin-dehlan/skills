@@ -50,6 +50,18 @@ widgets). The brief lists these as "still to take" with exact steps.
 
 Capture rules: demo data that looks lived-in (no empty lists, no "Test 1"), realistic names,
 the theme the app ships with, `debugShowCheckedModeBanner: false`, no notifications.
+Run `status_bar clear` before `override`, and look at one capture: after a simulator reboot
+the time can come back as "09:41" (fix: a 12-hour region, see [store-reel.md](store-reel.md)).
+
+Design rules learned from owner feedback:
+- Mock system screens (lock screen, home screen widget) show only what the system shows
+  there. Text the app does not put on that screen (a room name under the clock) reads as
+  wrong.
+- Highlight without an accent colour: lift the element (scale, shadow) instead of a coloured
+  ring or bar.
+- Pixel fonts: `font-variant-ligatures: none`, or "fi" turns into a ligature that reads wrong ("ﬁle").
+- Headlines don't repeat the same word across the set (the app's genre word at most once or
+  twice).
 
 ## 2. Brief (`aso_handoff.md`)
 
@@ -103,3 +115,5 @@ rest. Reuse the saved design system or the app's previous set instead of restati
 
 Both export folders filled with the right sizes, headlines signed off by the owner, `listing.md`
 and the screenshots in the same locales, files committed under `store/listing/export/`.
+
+A motion version of the set (promo video, social reel): [store-reel.md](store-reel.md).
