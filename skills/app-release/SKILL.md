@@ -63,7 +63,7 @@ the skills repo.
    `.p12` / `.pem` / `.key`, service-account JSON and Firebase client configs.
 2. gitleaks pre-commit hook (`scripts/install-git-hooks.sh` once per clone) with
    `.gitleaks.toml`.
-3. gitleaks in CI on every PR and push to `main`.
+3. gitleaks in CI on every PR and release tag (merges reach `main` only through PRs).
 
 `bash scripts/check_secrets.sh` checks all three plus tracked files (gitleaks reads content,
 so a committed keystore or `.p8` is found only there). Run it when setting up a clone and
@@ -75,6 +75,13 @@ before every store upload.
   `--no-verify`.
 - A pushed secret is leaked, even on a private repo: **rotate it first**, then remove it.
   History rewriting is cleanup, not the fix.
+
+## When Actions are blocked
+
+Free plan: 2,000 Actions minutes a month, then jobs are refused until the 1st. Workflows run
+on PRs, `v*` tags and by hand only (`templates/ci/`). When a run is refused, ask the owner,
+then run `scripts/ci_local.sh` (or the workflow steps, minus deploys and secrets) and post the
+result on the PR as "CI run locally (GitHub Actions blocked)".
 
 ## Repo visibility
 
@@ -116,7 +123,7 @@ the issue or PR number.
 
 ## Before every store upload
 
-1. CI green on the release commit; version and changelog bumped in it;
+1. CI green on the release commit (or `scripts/ci_local.sh` green when Actions are blocked); version and changelog bumped in it;
    `bash scripts/check_secrets.sh` passes.
 2. No destructive database change ships without its expand/contract plan and the
    minimum-version gate (see the supabase-app-backend skill).
