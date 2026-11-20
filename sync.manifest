@@ -15,6 +15,7 @@ seed	templates/claude/settings.json	.claude/settings.json
 seed	templates/CLAUDE.app.md	CLAUDE.md
 managed	skills/flutter-feature-stack/scripts/check_layers.sh	scripts/check_layers.sh
 managed	skills/flutter-feature-stack/scripts/check_file_sizes.sh	scripts/check_file_sizes.sh
+managed	skills/flutter-feature-stack/scripts/run_tests.sh	scripts/run_tests.sh
 managed	templates/claude/hooks/guard-files.sh	.claude/hooks/guard-files.sh
 managed	templates/claude/hooks/check-edited-dart.sh	.claude/hooks/check-edited-dart.sh
 managed	templates/claude/hooks/gate-pr-create.sh	.claude/hooks/gate-pr-create.sh

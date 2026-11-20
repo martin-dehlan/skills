@@ -233,9 +233,9 @@ hand-write schema-version tests when the generator exists.
 
 ## Upgrades
 
-After a Flutter, Dart or codegen upgrade, run `flutter test` and one real build.
+After a Flutter, Dart or codegen upgrade, run the tests and a real build.
 `flutter analyze` does not compile packages in `.pub-cache`, so a package broken by the new
-SDK only fails at build time. A dead package gets vendored under `packages/`.
+SDK fails only at build. A dead package is vendored under `packages/`.
 
 ## Before you say done
 
@@ -244,7 +244,7 @@ app with hot reload and screenshot, Maestro on a fresh build):
 [references/verify-changes.md](references/verify-changes.md). Look at the image.
 
 ```bash
-dart format . && flutter analyze && flutter test
+dart format . && flutter analyze && bash scripts/run_tests.sh
 bash scripts/check_ui_rules.sh             # when UI files changed
 bash scripts/check_layers.sh               # new imports against the layer table
 bash scripts/check_file_sizes.sh           # a file over its limit may not grow

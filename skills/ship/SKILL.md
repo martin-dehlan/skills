@@ -13,7 +13,7 @@ Never merge; merging is the owner's decision.
    unrelated changes: create `<type>/<name>` first (app-release: Branches and PRs). Several
    unrelated changes become several branches.
 2. **Checks** from the app's CLAUDE.md *Commands*: `dart format .`, `flutter analyze`,
-   `flutter test`, `build_runner` when annotations changed, `scripts/check_ui_rules.sh`,
+   `scripts/run_tests.sh`, `build_runner` when annotations changed, `scripts/check_ui_rules.sh`,
    `check_layers.sh`, `check_file_sizes.sh`, `check_claude_helpers.py`, `check_secrets.sh`.
    A failure: fix it, rerun, continue. Do not report green without running them.
 3. **Commit** in Conventional Commits, one logical change per commit, never `--no-verify`.

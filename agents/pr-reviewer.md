@@ -38,7 +38,7 @@ what to run; it does not repeat the rules. `flutter-feature-stack` is preloaded.
    - `bash scripts/check_secrets.sh origin/main` (else `gitleaks git --redact
      --log-opts="origin/main..HEAD" .` and report the missing script)
    - `bash <skills>/sync.sh --check .` (scripts still match the skills repo)
-   - `flutter analyze`, and `flutter test` for the folders that mirror the changed `lib/` folders
+   - `flutter analyze`, and `bash scripts/run_tests.sh <folders>` for the folders that mirror the changed `lib/` folders
    - auth, router, deep links or `ios/` / `android/` config changed:
      `bash scripts/check_login_config.sh --strict`, and the Maestro auth flows in `e2e/` when an
      emulator or simulator is reachable (app-release, device testing). If none is reachable,
